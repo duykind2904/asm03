@@ -1,50 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Work CV</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&display=swap" rel="stylesheet">
-    <!-- CSS -->
-    <link rel="stylesheet" th:href="@{/assets/css/open-iconic-bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/animate.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/owl.carousel.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/owl.theme.default.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/magnific-popup.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/aos.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/ionicons.min.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/bootstrap-datepicker.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/jquery.timepicker.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/css/bootstrap-reboot.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/css/mixins/_text-hide.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/flaticon.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/icomoon.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/bootstrap/bootstrap-grid.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/bootstrap/bootstrap-reboot.css}">
-    <!-- JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.3.2/jquery-migrate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.easing/1.4.1/jquery.easing.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.stellar/0.6.2/jquery.stellar.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/owl.carousel/2.3.4/owl.carousel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-animateNumber/0.0.14/jquery.animateNumber.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollax/2.7.0/scrollax.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&sensor=false"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gmaps/0.4.25/gmaps.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/29.2.0/classic/ckeditor.js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-</head>
+
+<head th:replace="base/head.html :: header('Login')"></head>
 <body>
+<section th:include="base/nav-header.html :: navFragment"></section>
 <nav class="header_menu navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-    <!-- Your navigation content here -->
+    
 </nav>
-<div class="hero-wrap hero-wrap-2" style="background-image: url('user/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5">
+<div class="hero-wrap hero-wrap-2" style="background-image: url('/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5">
     <div class="overlay"></div>
     <div class="container">
         <div class="row no-gutters slider-text align-items-end justify-content-start">
@@ -56,7 +19,7 @@
     </div>
 </div>
 
-<section class="section-hero overlay inner-page bg-image" style="background-image: url('images/hero_1.jpg');" id="home-section">
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('/assets/images/bg_1.jpg');" id="home-section">
     <div class="container">
         <div class="row">
             <div class="col-md-7">
@@ -69,7 +32,7 @@
         </div>
     </div>
 </section>
-<section class="site-section">
+<section id="app" class="site-section">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 mb-5">
@@ -110,23 +73,24 @@
             </div>
             <div class="col-lg-6">
                 <h2 class="mb-4">Đăng nhập</h2>
-                <form action="/auth/login" method="post" class="p-4 border rounded" th:action="@{/auth/login}">
+                <form class="p-4 border rounded">
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
                             <label class="text-black" for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+                            <input type="email" v-model="emailLogin" id="email" name="email" class="form-control" placeholder="Email" required>
                         </div>
                     </div>
                     <div class="row form-group mb-4">
                         <div class="col-md-12 mb-3 mb-md-0">
                             <label class="text-black" for="password">Mật khẩu</label>
-                            <input type="password" id="password" name="password" class="form-control" placeholder="Mật khẩu" required>
+                            <input type="password" v-model="passwordLogin" id="password" name="password" class="form-control" placeholder="Mật khẩu" required>
                         </div>
                     </div>
+                    <!-- <div v-if="validator_login">{{validator_login}}</div> -->
 
                     <div class="row form-group">
                         <div class="col-md-12">
-                            <input type="submit" value="Đăng nhập" class="btn px-4 btn-primary text-white">
+                            <input type="button" @click="login" value="Đăng nhập" class="btn px-4 btn-primary text-white">
                         </div>
                     </div>
                 </form>
@@ -134,8 +98,14 @@
         </div>
     </div>
 </section>
-<!--<footer th:replace="public/fragments :: footer" class="ftco-footer ftco-bg-dark ftco-section">
-     Your footer content here 
-</footer>-->
+<!-- window.user = /*[[${user}]]*/ null; 
+	window.save_user = /*[[@{/auth/register}]]*/ null; -->
 </body>
+<script th:inline="javascript">
+	window.url = /*[[@{/}]]*/ 'test';
+	var contextPath = /*[[${#httpServletRequest.getContextPath()}]]*/ '';
+	console.log('path', contextPath)
+</script>
+<script th:src="@{/assets/js/export/login.js}"></script>
+
 </html>

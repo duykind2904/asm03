@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,6 +19,7 @@ import com.asm3.service.UserService;
 
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired  UserService userService;
@@ -52,12 +54,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors() // Ngăn chặn request từ một domain khác
                     .and()
+                    .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/auth/login").permitAll() // Cho phép tất cả mọi người truy cập vào địa chỉ này
                     .antMatchers("/asm3/**").permitAll()
-                    .antMatchers("/static/**").permitAll()
-                    .antMatchers("/**").permitAll()
+                    .antMatchers("/assets/**").permitAll()
                     .anyRequest().authenticated(); // Tất cả các request khác đều cần phải xác thực mới được truy cập
+//        			.and()
+//        			.formLogin()
+//        			.loginPage("/asm3/login")
+//        			.permitAll();
 
         // Thêm một lớp Filter kiểm tra jwt
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
