@@ -27,6 +27,7 @@ const app = new Vue({
     isCode: false,
     
     user: window.user,
+    doctor: window.doctor,
     validator_login: null,
   },
   
@@ -41,24 +42,20 @@ const app = new Vue({
 
   
   methods: {
-	  async login() {      
-	    var isValid = await this.checkInputLogin(); 
-	    if (isValid) {
-	        try {
-	            const response = await validatorLogin(this.emailLogin, this.passwordLogin);
-	            if (response === "LOGIN SUCCESS") {
-	                console.log("Đăng nhập thành công.");
-					swal("Đăng nhập thành công");
-					setTimeout(() => {
-						window.location.href = '/asm3/';
-					}, 1 * 1000);				
-	            } else {
-	                console.log("Đăng nhập thất bại.");
-	                app.validator_login = 'Không đúng email hoặc mật khẩu';
-	            }
-	        } catch (error) {
-	            console.error('Lỗi khi gửi yêu cầu đăng nhập:', error);
-	        }
+	  async create() {      
+	    //var isValid = await this.checkInput(); 
+	    if (true) {
+			app.doctor.user = app.user;
+	        const response = await saveDoctor(app.doctor);
+      	  	if (response === "SAVE DOCTOR SUCCESS") {
+                console.log("thêm bác sĩ thành công thành công.");
+				swal("Thêm bác sĩ thành công");
+				setTimeout(() => {
+					window.location.href = '/asm3/doctor/list';
+				}, 1 * 1000);				
+            } else {
+                console.log("thêm bác sĩ thất bại");
+            }
 	    }
 	},
 	
@@ -73,32 +70,6 @@ const app = new Vue({
 			isValid = false;
 		}
 		return isValid;
-	},
-	
-	forgotPass() {
-		if(app.emailForgotPass.trim()) {
-			app.isCode = true;
-			sendMail(app.emailForgotPass).done(function(response) {
-				console.log(response)
-			});
-		}
-	},
-	
-	
-	
-	
-	async handleregister(user) {
-		console.log(user);				
-		var isValid = await this.checkInput();		
-		if (true) {
-			swal("Đăng ký thành công");
-			await saveUser(this.user);
-			setTimeout(() => {
-				window.location.href = '/asm3/profile/user';
-			}, 1 * 1000);
-
-		}		
-		
 	},
 	
 	checkInput: async function() {
@@ -154,38 +125,10 @@ const app = new Vue({
    
 });
 
-function validatorLogin(emailLogin, passwordLogin) {
-    var loginRequest = {
-        email: emailLogin,
-        password: passwordLogin
-    };
-    
-    return $.ajax({
-        url: '/auth/login',
-        data: JSON.stringify(loginRequest),
-        contentType: 'application/json',
-        method: 'POST',
-        type: 'POST',
-               
-    });
-}
-
-function sendMail(email) {
+function saveDoctor(doctor) {
 	return $.ajax({
-		url: '/auth/sendMailForgotPass.json',
-		data: {
-			email: email,
-		},
-		cache: false,
-		method: 'GET',
-		type: 'GET'
-	});	
-}
-
-function saveUser(user) {
-	return $.ajax({
-		url: '/auth/saveUser',
-		data: JSON.stringify(user),
+		url: '/doctor/saveDoctor',
+		data: JSON.stringify(doctor),
 		cache: false,
 		contentType: 'application/json',
 		processData: false,
@@ -193,20 +136,6 @@ function saveUser(user) {
 		type: 'POST'
 	});
 	
-}
-
-
-function checkEmailRegister(email) {
-	return $.ajax({
-		url: '/auth/checkEmailRegister',
-		data: {
-			email: email,
-		},
-		
-		cache: false,
-		method: 'GET',
-		type: 'GET',
-	});	
 }
 
 

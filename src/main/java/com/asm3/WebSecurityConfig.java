@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -51,15 +51,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors() // Ngăn chặn request từ một domain khác
-                    .and()
-                    .csrf().disable()
-                .authorizeRequests()
-                    .antMatchers("/auth/login").permitAll() // Cho phép tất cả mọi người truy cập vào địa chỉ này
-                    .antMatchers("/asm3/**").permitAll()
-                    .antMatchers("/assets/**").permitAll()
-                    .anyRequest().authenticated(); // Tất cả các request khác đều cần phải xác thực mới được truy cập
+    	http
+        	.cors()
+        		.and()
+        	.csrf().disable()
+        	.authorizeRequests()
+        		.antMatchers("/doctor/**").permitAll()
+        		.antMatchers("/auth/**").permitAll() 
+        		.antMatchers("/asm3/**").permitAll()
+        		.antMatchers("/assets/**").permitAll()
+        		.anyRequest().authenticated()
+        		.and()
+        	.logout()
+        		.logoutUrl("/asm3/logout")
+    			.logoutSuccessUrl("/asm3/login?logout")
+    			.invalidateHttpSession(true)
+    			.deleteCookies("JSESSIONID")
+    			.addLogoutHandler(new CustomLogoutHandler())
+    			.clearAuthentication(true);
+    
 //        			.and()
 //        			.formLogin()
 //        			.loginPage("/asm3/login")

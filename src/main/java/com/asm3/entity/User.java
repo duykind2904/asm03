@@ -1,5 +1,7 @@
 package com.asm3.entity;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,8 +45,23 @@ public class User {
 	@Column(name="is_active")
     private boolean isActive;
 	
-	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;  
+	
+	@Column(name="fullname")
+	private String fullName;
+	
+	@Column(name="code")
+	private String code;
+	
+	@Column(name="description_lock")
+	private String descriptionLock;
+	
+	@Transient
+	private String rePassword;
+	
+	@OneToMany(mappedBy="user")
+	private List<Schedule> schedules;
 	
 }

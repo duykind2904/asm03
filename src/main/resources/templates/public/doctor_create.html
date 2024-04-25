@@ -12,31 +12,18 @@
     <div class="container">
         <div class="row no-gutters slider-text align-items-end justify-content-start">
             <div class="col-md-12 text-center mb-5">
-                <p class="breadcrumbs mb-0"><span class="mr-3"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> đăng nhập<span></span></p>
-                <h1 class="mb-3 bread">Đăng nhập / Đăng kí</h1>
+                <p class="breadcrumbs mb-0"><span class="mr-3"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> Bác sĩ<span></span></p>
+                <h1 class="mb-3 bread">Thêm bác sĩ</h1>
             </div>
         </div>
     </div>
 </div>
 
-<section class="section-hero overlay inner-page bg-image" style="background-image: url('/assets/images/bg_1.jpg');" id="home-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-7">
-                <h1 class="text-white font-weight-bold">Đăng kí / đăng nhập</h1>
-                <div class="custom-breadcrumbs">
-                    <a href="#">Trang chủ</a> <span class="mx-2 slash">/</span>
-                    <span class="text-white"><strong>Đăng nhập</strong></span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 <section id="app" class="site-section">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 mb-5">
-                <h2 class="mb-4">Đăng kí</h2>
+                <h2 class="mb-4">Thông tin Cá nhân</h2>
                 <form>
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
@@ -64,80 +51,58 @@
                             <input type="password" id="rePassword" name="rePassword" v-model="user.rePassword" class="form-control" placeholder="Nhập lại mật khẩu" required>
                         </div>
                     </div>
-                    <div class="row form-group">
-                        <div class="col-md-12">
-                            <input type="button" value="Đăng kí" @click="handleregister(user)" class="btn px-4 btn-primary text-white">
-                        </div>
-                    </div>
+                    
                 </form>
             </div>
             <div class="col-lg-6">
-                <h2 class="mb-4">Đăng nhập</h2>
+                <h2 class="mb-4">Thông tin bác sĩ</h2>
                 <form class="p-4 border rounded">
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-black" for="email">Email</label>
-                            <input type="email" v-model="emailLogin" id="email" name="email" class="form-control" placeholder="Email" required>
+                            <label class="text-black">Giới thiệu chung</label>
+                            <textarea v-model="doctor.introduction" id="introduction" class="form-control" placeholder="Introduction" required></textarea>
                         </div>
                     </div>
                     <div class="row form-group mb-1">
                         <div class="col-md-12 mb-md-0">
-                            <label class="text-black" for="password">Mật khẩu</label>
-                            <input type="password" v-model="passwordLogin" id="password" name="password" class="form-control" placeholder="Mật khẩu" required>
+                            <label class="text-black">Quá trình đào tạo</label>
+                            <textarea v-model="doctor.trainingProcess" id="trainingProcess" class="form-control" placeholder="Training process" required></textarea>
                         </div>
                     </div>
-                    <div>
-                    	<div class="float-left text-danger">{{validator_login}}</div>
-                   		<div class="mb-3 text-right" data-toggle="modal" data-target="#forgotPassword"> <a href="#"> Quên mật khẩu ?</a></div>
+                    <div class="row form-group mb-1">
+                        <div class="col-md-12 mb-md-0">
+                            <label class="text-black">Thành tựu đạt được</label>
+                            <textarea v-model="doctor.achievements" id="achievements" class="form-control" placeholder="Achievements" required></textarea>
+                        </div>
                     </div>
-                    
-                    
-                    
-
-                    <div class="row form-group">
-                        <div class="col-md-12">
-                            <input type="button" @click="login" value="Đăng nhập" class="btn px-4 btn-primary text-white">
+                    <div class="row form-group mb-1">
+                        <div class="col-md-12 mb-md-0">
+                            <label class="text-black" >Chuyên khoa phụ trách</label>
+							<textarea v-model="doctor.specialty" id="specialty" class="form-control" placeholder="specialty" required></textarea>
                         </div>
                     </div>
                 </form>
             </div>
+            
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <input type="button" value="Create" @click="create" class="btn px-4 btn-primary text-white">
+                </div>
+            </div>
         </div>
     </div>
-    
-   <!-- Modal  -->
-	<div id="forgotPassword" class="modal fade" role="dialog">
-		<div class="modal-dialog">	
-	    <!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">Quên mật khẩu</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-				<form>
-					<div class="modal-body">
-						<p>Nhập email bạn đã đăng ký</p>
-						<input type="email" v-model="emailForgotPass" class="form-control" placeholder="abc@gmai.com" required>
-						<p v-if="isCode"> Chúng tôi vừa gửi một link tới email của bạn. Vui lòng kiểm tra email để xác thực </p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" v-if="!isCode" @click="forgotPass" class="btn btn-primary">Gửi</button>
-						<button type="button" v-if="isCode" @click="comfirmCode" class="btn btn-primary">Gửi</button>
-						<button type="button" class="btn btn-info" data-dismiss="modal">Đóng</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+  
 </section>
 <!-- window.user = /*[[${user}]]*/ null; 
 	window.save_user = /*[[@{/auth/register}]]*/ null; -->
 </body>
 <script th:inline="javascript">
 	window.user = /*[[${user}]]*/ 'null';
+	window.doctor = /*[[${user}]]*/ 'null';
 	window.url = /*[[@{/}]]*/ 'test';
 	var contextPath = /*[[${#httpServletRequest.getContextPath()}]]*/ '';
 	console.log('path', contextPath)
 </script>
-<script th:src="@{/assets/js/export/login.js}"></script>
+<script th:src="@{/assets/js/export/doctor_create.js}"></script>
 
 </html>

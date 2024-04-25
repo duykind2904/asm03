@@ -1,19 +1,9 @@
 package com.asm3.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping("/asm3")
+@RestController
 public class HomeController {
-	@RequestMapping("/")
-	public String home() {
-		return "public/index";
-	}
-	
-	@RequestMapping("/login")
-	public String login() {
-		return "public/login";
-	}
 
 }
