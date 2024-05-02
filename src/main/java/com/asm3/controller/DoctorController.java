@@ -66,6 +66,7 @@ public class DoctorController {
 		List<Doctor> doctors = doctorService.findAllDoctorsWithUser(pageNumber, pageSize);
 		
 		for(Doctor doctor : doctors) {
+			doctor.setSpecialization(null);
 			doctor.getUser().setRole(null);
 		}
 		

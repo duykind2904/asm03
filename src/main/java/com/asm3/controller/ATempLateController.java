@@ -36,7 +36,7 @@ public class ATempLateController {
 	}
 	
 	@RequestMapping("/login")
-	public String login(Model model) {
+	public String login(Model model, Principal p) {
 		UserDTO userDTO = new UserDTO();
 		model.addAttribute("user", userDTO);
 		return "public/login";

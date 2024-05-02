@@ -23,7 +23,7 @@ public class ScheduleController {
 	@Autowired private ScheduleService scheduleService;
 	@Autowired private PatientService patientService;
 	
-	@GetMapping(value="countUserSchedule")
+	@GetMapping(value="/countUserSchedule")
 	public ResponseEntity<Long> countUserSchedule(@RequestParam(name="doctorId", defaultValue = "0") int doctorId) {
 		
 		long count = scheduleService.countUserSchedule(doctorId);
