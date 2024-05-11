@@ -7,13 +7,95 @@
 <nav class="header_menu navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     
 </nav>
-<div class="hero-wrap hero-wrap-2" style="background-image: url('/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5">
+<div class="hero-wrap img" style="background-image: url('/assets/images/bg_1.jpg');">
     <div class="overlay"></div>
     <div class="container">
-        <div class="row no-gutters slider-text align-items-end justify-content-start">
-            <div class="col-md-12 text-center mb-5">
-                <p class="breadcrumbs mb-0"><span class="mr-3"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> Bác sĩ<span></span></p>
-                <h1 class="mb-3 bread">Danh sách bác sĩ</h1>
+        <div class="row d-md-flex no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-10 d-flex align-items-center justify-content-center">
+                <div class="text text-center pt-5 mt-md-5">
+                    <h1 class="mb-4">Nền tảng y tế. Sức khỏe toàn diện</h1>
+                    <h3 class="mb-5 text-light">Đặt lịch khám ngay với Doctor Care</h3>
+                    <div class="ftco-counter ftco-no-pt ftco-no-pb">
+                        <div class="row">
+                            <div class="col-md-4 d-flex justify-content-center counter-wrap ">
+                                <div class="block-18">
+                                    <div class="text d-flex">
+                                        <div class="icon mr-2">
+                                            <span class="flaticon-visitor"></span>
+                                        </div>
+                                        <div class="desc text-left">
+                                            <strong class="number" data-number="46" th:text="${numberCandidate}"></strong>
+                                            <span>Dịch vụ toàn diện</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex justify-content-center counter-wrap ">
+                                <div class="block-18 text-center">
+                                    <div class="text d-flex">
+                                        <div class="icon mr-2">
+                                            <span class="flaticon-visitor"></span>
+                                        </div>
+                                        <div class="desc text-left">
+                                            <strong class="number" data-number="450" th:text="${numberCompany}"></strong>
+                                            <span>Khám từ xa</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex justify-content-center counter-wrap">
+                                <div class="block-18 text-center">
+                                    <div class="text d-flex">
+                                        <div class="icon mr-2">
+                                            <span class="flaticon-resume"></span>
+                                        </div>
+                                        <div class="desc text-left">
+                                            <strong class="number" data-number="80000" th:text="${numberRecruitment}"></strong>
+                                            <span>Cơ sở nổi bật</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ftco-search my-md-5">
+                        <div class="row">
+                            <div class="col-md-12 nav-link-wrap">
+                                <div class="nav nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    <a class="nav-link active" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="true">Tìm kiếm chung</a>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 tab-wrap">
+                                <div class="tab-content p-4" id="v-pills-tabContent">
+                                	<div class="tab-pane fade show active" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-performance-tab">
+                                        <form action="/asm3/doctor/searchGeneral" method="post" class="search-job">
+                                            <div class="row no-gutters">
+
+                                                <div class="col-md-10 mr-md-2">
+                                                    <div class="form-group">
+                                                        <div class="form-field">
+                                                            <div class="icon"><span class="icon-map-marker"></span></div>
+                                                            <input type="text" name="keySearch" class="form-control" placeholder="Tìm kiếm chung">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-group">
+                                                        <div class="form-field">
+                                                            <button type="submit" class="form-control btn btn-primary">Tìm kiếm</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -24,53 +106,83 @@
         <div class="row">
             <div class="col-lg-12 pr-lg-4">
             	<div class="col-md-12 mb-3">
-                    <a th:href="@{/asm3/doctor/create}" class="btn px-4 btn-primary text-white">Thêm bác sĩ mới</a>
+                    <h2> Kết quả tìm kiếm chung với "<span> {{keySearch}} </span>"</h2>
                 </div>
-              
+              		<div>
+              			<p class="btn btn-success"> {{totalCount}}  kết quả</p>
+              		</div>
                     <div  v-for="(r, index) in listDoctor" :key="index">
                         <div class="col-md-12 ">
                             <div class="job-post-item p-4 d-block d-lg-flex align-items-center row">
-                                <div class="one-third mb-4 mb-md-0 col-7 text-break">
-	                                <div class="job-post-item-header align-items-center">
-                                     	  <h2 class="mr-3 text-black" ><a href="#">{{ r.user.fullName }}</a></h2>
-                                    </div>
-                                    <div>
-                                    	<lable> <b> Giới thiệu chung: </b> </lable>
-                                    	<span>{{ r.introduction}}</span>
-                                    </div>
-                                    <div>
-                                    	<lable> <b> Chuyên khoa phụ trách: </b> </lable>
-                                    	<span>{{ r.specialty}}</span>
-                                    </div>
-                                </div>
+                                <div class="one-third mb-4 mb-md-0 col-9 text-break">
+									<div class="job-post-item-header align-items-center">
+										<h2 class="mr-3">
+											<a href="#">{{ r.clinic ? r.clinic.name : '' }}</a>
+										</h2>
+									</div>
+									<div>
+										<label class=" text-warning"> <b> Giới thiệu chung: </b> </label>
+										<span>{{ r.clinic ? r.clinic.description : ''}}</span>
+									</div>
+									<div>
+										<label class=" text-warning"> <b> Bác sĩ : </b></label> 
+										<span>{{ r.user ? r.user.fullName : ''}}</span>
+									</div>
+									<div>
+										<label class=" text-warning"> <b> Chuyên khoa phụ trách: </b></label>
+										<span>{{r.specialization ? r.specialization.name : ''}}</span>
+									</div>
+									<div class="job-post-item-body d-block d-md-flex">
+										<div class="mr-3">
+											<span class="icon-phone"> </span> <a href="#">{{r.clinic ? r.clinic.phone : ''}}</a>
+										</div>
+										<div>
+											<span class="icon-my_location"></span> <span>{{r.clinic ? r.clinic.address: ''}}</span>
+										</div>
+									</div>
+								</div>
 
-                                <div class="one-forth ml-auto d-flex align-items-center md-md-0 col-5" style="width: 330px !important;">
-                                	<a v-if="r.user.active" @click="openLockModal(r.user.id)" class="btn btn-success py-2 ml-2">Khóa</a>
-                                	<a v-if="!r.user.active" @click="unlock(r.user.id)" class="btn btn-danger text-white py-2 ml-2">Mở khóa</a>
-                                	
-                                    <a :href="'/asm3/doctor/detail?id=' + r.id" class="btn btn-primary py-2 ml-2">Xem chi tiết</a>
-                                    <a :href="'/asm3/doctor/edit?id=' + r.id"  class="btn btn-warning py-2 ml-2">Cập nhật</a>
-                                    <a class="btn btn-danger py-2 ml-2" href="" data-toggle="modal" :data-target="'#exampleModal-' + r.id">Xóa</a>
-
+                                <div class="one-forth ml-auto d-flex align-items-center md-md-0 col-3" style="width: 330px !important;">
+                                    <a v-if="!r.isSchedule || r.isSchedule == false" class="btn btn-success py-2 ml-2" href="" data-toggle="modal" :data-target="'#exampleModal-' + r.id">Đặt lịch</a>
+									<a v-if="r.isSchedule == true" class="btn btn-info py-2 ml-2">Đã lên lịch</a>
                                 </div>
                             </div>
                         </div><!-- end -->
                         <!-- Modal -->
                         <div class="modal fade" :id="'exampleModal-' + r.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
+                            <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn xóa ?</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">Bạn muốn gặp bác sĩ {{r.user.fullName}} ?</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        Bác sĩ : <span>{{ r.user.fullName }}</span>
+                                    	<div class="row">
+                                    		<div class="col-6">
+                                    			<label> <b> Ngày</b> </label> <span class="text-danger">*</span> <br />
+		                                        <input type="date" v-model="schedule.date" class="form-group">
+		                                        <div class="text-danger"> {{validator.date}}</div>
+                                    		</div>
+                                    		<div class="col-6">
+                                    			<label> <b> Giờ</b> </label> <span class="text-danger">*</span> <br />
+		                                        <input type="time" v-model="schedule.time" id="appt" name="appt" min="00:00" max="23:59" step="1800" class="form-group">
+		                                        <div class="text-danger">{{validator.time}}</div>
+                                    		</div>
+                                    	
+                                    	</div>
+                                        
+                                        <div class="mt-3">
+                                        	<label> <b> Mô tả tình trạng bệnh: </b> </label> <span class="text-danger">*</span><span class="text-danger">{{test}}</span>
+	                                        <textarea v-model="schedule.description" class="form-control" required></textarea>
+	                                        <span v-if="validator.description" class="text-danger">{{validator.description}}</span>
+	                                        <!-- <span v-if="validator.test" class="text-danger">{{validator.test}}</span> -->
+                                        </div>
                                         <form>
                                             <div class="modal-footer mt-1">
+                                            	<button type="button" @click="scheduleDoctor(r)" class="btn btn-success">Đặt lịch</button>
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                                <button type="button" @click="deleteDoctor(r.id)" data-dismiss="modal" class="btn btn-danger">Xóa</button>
                                             </div>
                                         </form>
                                     </div>
@@ -79,35 +191,6 @@
                             </div>
                         </div>
                         <!-- Modal -->
-                        
-                        <!-- Modal Lock-->
-                        <div class="modal fade" :id="'exampleModalLock-' + r.user.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn khóa?</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <label> <b> Bác sĩ : </b> </label>
-                                        <span>{{ r.user.fullName }}</span> <br />
-                                        
-                                        <label> <b> Lý do: </b></label>
-                                        <textarea v-model="r.user.descriptionLock" class="form-control" required></textarea>
-                                        <form>
-                                            <div class="modal-footer mt-1">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                                <button type="button" @click="lock(r.user.id, r.user.descriptionLock)" data-dismiss="modal" class="btn btn-danger">Khóa</button>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Modal Lock-->
                         
                     </div>
                 
@@ -131,10 +214,10 @@
         </div>
     </div>
 </section>
-</section>
 
 </body>
 <script th:inline="javascript">
+	window.userId = /*[[${userId}]]*/ 0;
 	window.keySearchGeneral = /*[[${keySearchGeneral}]]*/ null;
 </script>
 <script th:src="@{/assets/js/export/doctor_list_searchGeneral.js}"></script>

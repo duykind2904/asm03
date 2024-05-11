@@ -60,6 +60,11 @@ public class LoginController {
                             loginRequest.getPassword()
                     )
             );
+            User user = userService.findByEmail(loginRequest.getEmail());
+            if(!user.isActive()) {
+            	return new ResponseEntity<String>("USER BLOCKED", HttpStatus.OK);
+            }
+            
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
             return new ResponseEntity<String>("LOGIN SUCCESS", HttpStatus.OK);
@@ -70,40 +75,47 @@ public class LoginController {
     
     @Autowired private EmailService emailService;
     @GetMapping("/sendMailForgotPass.json")
-    public ResponseEntity<String> sendMailForgotPass(@RequestParam(name="email", defaultValue = "") String email) throws MessagingException{
-    	User user = userService.findByEmail(email);
-    	if(user == null) {
-    		return new ResponseEntity<String>("Email not exist", HttpStatus.OK);
-    	} 
-    	
-    	String code = generateRandomString();
-    	String resetLink = "localhost:7070/asm3/resetpassword" +  "?id=" + user.getId() + "&code=" + code;
-    	String subject = "Đặt lại mật khẩu";
-    	String emailContent = "Xin chào, Vui lòng click vào đường link sau để đặt lại mật khẩu:\n"
-    	        +  resetLink;
-//    	String emailContent = "<div> Xin chào, Vui lòng click vào đường link sau để đặt lại mật khẩu: </div>"
-//                + "<a href=\"" + resetLink + "\">Click vào đây</a>";
-    	
-    	userService.updateCode(user.getId(), code);
-    	
-    	emailService.sendMail(email, subject, emailContent);
-    	return new ResponseEntity<String>("SEND MAIL SUCCESS", HttpStatus.OK);
+    public ResponseEntity<String> sendMailForgotPass(@RequestParam(name="email", defaultValue = "") String email) throws MessagingException {
+    	try {
+	    	User user = userService.findByEmail(email);
+	    	if(user == null) {
+	    		return new ResponseEntity<String>("Email not exist", HttpStatus.OK);
+	    	} 
+	    	
+	    	String code = generateRandomString();
+	    	String resetLink = "localhost:7070/asm3/resetpassword" +  "?id=" + user.getId() + "&code=" + code;
+	    	String subject = "Đặt lại mật khẩu";
+	    	String emailContent = "Xin chào, Vui lòng click vào đường link sau để đặt lại mật khẩu:\n"
+	    	        +  resetLink;
+	//    	String emailContent = "<div> Xin chào, Vui lòng click vào đường link sau để đặt lại mật khẩu: </div>"
+	//                + "<a href=\"" + resetLink + "\">Click vào đây</a>";
+	    	
+	    	userService.updateCode(user.getId(), code);
+	    	
+	    	emailService.sendMail(email, subject, emailContent);
+	    	return new ResponseEntity<String>("SEND MAIL SUCCESS", HttpStatus.OK);
+    	} catch (Exception e) {
+    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
+    	}
     }
     
     @PostMapping(value="/updatePassword.json")
     public ResponseEntity<String> updatePassword(@RequestBody LoginRequest loginRequest) {
-    	int id = loginRequest.getId();
-        String password = loginRequest.getPassword();
-        String encoderPasword = passwordEncoder.encode(password);
-        userService.updatePassword(id, encoderPasword);
-        
-    	return new ResponseEntity<String>("RESET SUCCESS", HttpStatus.OK);
+    	try {
+	    	int id = loginRequest.getId();
+	        String password = loginRequest.getPassword();
+	        String encoderPasword = passwordEncoder.encode(password);
+	        userService.updatePassword(id, encoderPasword);
+	        
+	    	return new ResponseEntity<String>("RESET SUCCESS", HttpStatus.OK);
+    	} catch (Exception e) {
+    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
+    	}
     }    
     
     @GetMapping("/checkEmailRegister")
     public ResponseEntity<Boolean> checkEmailRegister(@RequestParam(name="email", defaultValue = "") String email) {
     	boolean check = userService.checkEmailExist(email);
-    	
         return new ResponseEntity<>(check, HttpStatus.OK);
     }
     
@@ -115,6 +127,7 @@ public class LoginController {
     		Role role = roleService.findById(idUserDefauld);
     		user.setPassword(passwordEncoder.encode(user.getPassword()));
     		user.setRole(role);   		
+    		user.setActive(true);
         	userService.save(user);
     	} catch (Exception e) {
     		return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
@@ -137,14 +150,14 @@ public class LoginController {
     
     
 
-    @GetMapping("/random")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public RandomStuff randomStuff(Principal principal){
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    	CustomUserDetails cu = (CustomUserDetails) authentication.getPrincipal();
-    	User user = cu.getUser();
-        return new RandomStuff("JWT Hợp lệ mới có thể thấy được message này");
-    }
+//    @GetMapping("/random")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    public RandomStuff randomStuff(Principal principal){
+//    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//    	CustomUserDetails cu = (CustomUserDetails) authentication.getPrincipal();
+//    	User user = cu.getUser();
+//        return new RandomStuff("JWT Hợp lệ mới có thể thấy được message này");
+//    }
     
     private String generateRandomString() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

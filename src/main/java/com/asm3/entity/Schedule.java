@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,14 +34,21 @@ public class Schedule {
 	@Column(name="description")
 	private String description;
 	
-	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "doctor_id", referencedColumnName = "id")
 	private Doctor doctor;
 	
-	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 	
-	@OneToOne(mappedBy = "schedule", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "schedule", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Patient patient;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "specializations_id", referencedColumnName = "id")
+    private Specialization specialization;
+	
+	
+	
 }

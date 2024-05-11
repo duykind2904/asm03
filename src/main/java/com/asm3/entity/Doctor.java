@@ -36,25 +36,20 @@ public class Doctor {
 	@Column(name="achievements")
     private String achievements;
 	
-	@Column(name="specialty")
-    private String specialty;
-	
-	@Column(name="is_active")
-    private boolean isActive;
-	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;  
 	
-	@OneToMany(mappedBy="doctor")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="doctor")
 	private List<Schedule> schedules;
 	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "clinics_id", referencedColumnName = "id")
     private Clinic clinic;
 	
-	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "specializations_id", referencedColumnName = "id")
     private Specialization specialization;  
+	
 	
 }

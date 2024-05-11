@@ -16,6 +16,10 @@ public class PatientService {
 	@Autowired private PatientRepo repo;
 	@PersistenceContext private EntityManager entityManager;
 	
+	public Patient save(Patient patient) {
+		return repo.save(patient);
+	}
+	
 	public void updateConfirm(int patientId, boolean status, String descriptionDisease) {
 		Patient patientUpdate = entityManager.find(Patient.class, patientId);
 		if( patientUpdate != null) {

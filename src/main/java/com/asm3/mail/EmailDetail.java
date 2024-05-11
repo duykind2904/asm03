@@ -1,5 +1,6 @@
 package com.asm3.mail;
 
+import java.io.File;
 import java.util.Properties;
 
 import javax.mail.*;
@@ -32,6 +33,21 @@ public class EmailDetail implements EmailService{
         helper.setTo(recipientEmail);
         helper.setSubject(subject);
         helper.setText(htmlContent, true);
+
+        javaMailSender.send(message);
+    }
+	
+	@Override
+	public void sendMailWithFile(String recipientEmail, String subject, String text, File pdfFile) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(recipientEmail);
+        helper.setSubject(subject);
+        helper.setText(text);
+        
+        if(pdfFile != null)
+        helper.addAttachment(pdfFile.getName(), pdfFile);
 
         javaMailSender.send(message);
     }

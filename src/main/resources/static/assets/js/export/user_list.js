@@ -1,9 +1,8 @@
 const app = new Vue({
   el: '#app',
   data: {
-    user: window.user,
-    url: window.url,
-   
+    url: window.url,  
+    
     listUser: [],
     totalCount: 0,
     pageTotal: 0,
@@ -21,9 +20,6 @@ const app = new Vue({
 					this.activeIndex = 1;
 					app.pageTotal = Math.floor(app.totalCount / app.pageSize) + (app.totalCount % app.pageSize > 0 ? 1 : 0);
 				}
-				console.log(app.totalCount % app.pageSize > 0 ? 1 : 0);
-				console.log(app.totalCount / app.pageSize);
-				console.log(app.pageTotal);
 			}
 		}
 	  

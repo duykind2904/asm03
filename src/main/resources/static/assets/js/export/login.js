@@ -1,24 +1,7 @@
 const app = new Vue({
   el: '#app',
   data: {
-    /*user: window.user,
-    url: window.url,
-    password1: '',
-    passwordVisible1: true,
-    password2: '',
-    passwordVisible2: true,
-    emailLogin: null,
-    passwordLogin: null,
-    errorLogin: true,
-    emailLoginMsg: "",
-    passwordLoginMsg: "",
-    emailMsg: "",
-    fullNameMsg: "",
-    passwordMsg: "",
-    rePasswordMsg: "",
-    roleMsg: "",
-    roleId: 0,*/
-    
+	      
     url: window.url,
     emailLogin: '',
     passwordLogin: '',
@@ -51,8 +34,15 @@ const app = new Vue({
 					swal("Đăng nhập thành công");
 					setTimeout(() => {
 						window.location.href = '/asm3/';
-					}, 1 * 1000);				
-	            } else {
+					}, 1 * 1000);
+	            } else if (response === "USER BLOCKED") {
+					swal("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin để được hướng dẫn");
+					setTimeout(() => {
+						window.location.href = '/asm3/';
+					}, 3 * 1000);
+				}
+	            
+	            else {
 	                console.log("Đăng nhập thất bại.");
 	                app.validator_login = 'Không đúng email hoặc mật khẩu';
 	            }
@@ -80,6 +70,10 @@ const app = new Vue({
 			app.isCode = true;
 			sendMail(app.emailForgotPass).done(function(response) {
 				console.log(response)
+				if(response === 'Email not exist') {
+					swal('Email chưa được đăng ký. Bạn vui lòng đăng ký');
+					$('#forgotPassword').modal('hide');
+				}
 			});
 		}
 	},
@@ -94,7 +88,7 @@ const app = new Vue({
 			swal("Đăng ký thành công");
 			await saveUser(this.user);
 			setTimeout(() => {
-				window.location.href = '/asm3/profile/user';
+				window.location.href = '/asm3/user/edit';
 			}, 1 * 1000);
 
 		}		

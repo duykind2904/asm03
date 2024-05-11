@@ -89,17 +89,25 @@ public class UserService implements UserDetailsService{
         }
 	}
 	
-	public long countUser() {
-		return repo.countUser();
+	public long countUserByRole() {
+		return repo.countUserByRole();
 	}
 	
-	public List<User> findAllUser(int pageNumber, int pageSize) {
+	public List<User> findAllUserByRole(int pageNumber, int pageSize) {
 		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
-		return repo.findAllUser(pageable).getContent();
+		return repo.findAllUserByRole(pageable).getContent();
 	}
 	
 	public void deleteUser(int id) {
 		repo.deleteById(id);
+	}
+	
+	public User findJoinAllUser(int id) {
+		return repo.findJoinAllUser(id);
+	}
+	
+	public List<User> findAllUserByRole() {
+		return repo.findAllUserByRole();
 	}
 	
 	

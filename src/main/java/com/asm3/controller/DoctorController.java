@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.asm3.entity.Clinic;
 import com.asm3.entity.Doctor;
 import com.asm3.dto.DoctorDTO;
 import com.asm3.entity.Role;
+import com.asm3.entity.Specialization;
 import com.asm3.entity.User;
+import com.asm3.service.ClinicService;
 import com.asm3.service.DoctorService;
 import com.asm3.service.RoleService;
+import com.asm3.service.SpecializationService;
 import com.asm3.service.UserService;
 
 @RestController
@@ -28,20 +32,44 @@ public class DoctorController {
 	@Autowired private UserService userService;
 	@Autowired private DoctorService doctorService;
 	@Autowired private RoleService roleService;
+	@Autowired private ClinicService clinicService;
+	@Autowired private SpecializationService specializationService;
 	
 	@Autowired private PasswordEncoder passwordEncoder;
 	
 	@PostMapping(value="/saveDoctor")
     public ResponseEntity<String> saveUser(@RequestBody Doctor doctor) {
     	try {
-    		Role role = roleService.findById(2);
+    		
     		User user = doctor.getUser();
-    		user.setRole(role);
-    		user.setActive(true);
-    		user.setPassword(passwordEncoder.encode(user.getPassword()));
-    		user = userService.save(doctor.getUser());
+    		if(doctor.getId() == 0) { //create new doctor
+    			Role role = roleService.findById(2);
+        		user = doctor.getUser();
+        		user.setRole(role);
+        		user.setActive(true);
+        		user.setPassword(passwordEncoder.encode(user.getPassword()));
+        		user = userService.save(user);
+    		}
+    		
+    		if(doctor.getId() > 0) {
+    			User userDB = userService.findById(doctor.getUser().getId());
+    			userDB.setFullName(user.getFullName());
+    			userDB.setAddress(user.getAddress());
+    			userDB.setPhone(user.getPhone());
+    			if(user.getPassword() != null) {
+        			user.setPassword(passwordEncoder.encode(user.getPassword()));
+        		}
+    			user = userService.save(userDB);
+    		}
+    		
+    		Clinic clinic = doctor.getClinic();
+    		clinic = clinicService.save(clinic);
+    		
+    		Specialization spe = specializationService.findById(doctor.getSpecialization().getId());
     		
     		doctor.setUser(user);
+    		doctor.setClinic(clinic);
+    		doctor.setSpecialization(spe);
     		doctorService.save(doctor);
     		
     	} catch (Exception e) {
@@ -60,17 +88,22 @@ public class DoctorController {
 	}
 	
 	@GetMapping(value="/getAllDoctor")
-	public ResponseEntity<List<Doctor>> getAllDoctor(@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
+	public ResponseEntity<List<DoctorDTO>> getAllDoctor(@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
 													 @RequestParam(name="pageSize", defaultValue = "0") int pageSize) {
-		pageNumber = pageNumber - 1;
-		List<Doctor> doctors = doctorService.findAllDoctorsWithUser(pageNumber, pageSize);
-		
-		for(Doctor doctor : doctors) {
-			doctor.setSpecialization(null);
-			doctor.getUser().setRole(null);
+		try {
+			pageNumber = pageNumber - 1;
+			List<Doctor> doctors = doctorService.findAllDoctorsWithUser(pageNumber, pageSize);
+			
+			List<DoctorDTO> dsDTO = new ArrayList<DoctorDTO>();
+			for(Doctor doctor : doctors) {
+				DoctorDTO doctorDTO = DoctorDTO.convertToDTOBySearch(doctor);
+				dsDTO.add(doctorDTO);
+			}
+			
+			return new ResponseEntity<>(dsDTO, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.OK);
 		}
-		
-		return new ResponseEntity<List<Doctor>>(doctors, HttpStatus.OK);
 	}
 	
 	@GetMapping(value="/updateLock")
@@ -78,40 +111,83 @@ public class DoctorController {
 			@RequestParam(name="isLock", defaultValue="") boolean isLock,
 			@RequestParam(name="descriptionLock", defaultValue="") String descriptionLock) {
 		
-		userService.updateLock(userId, isLock, descriptionLock);
-		return new ResponseEntity<String>("OK", HttpStatus.OK);
+		try {
+			userService.updateLock(userId, isLock, descriptionLock);
+			return new ResponseEntity<String>("OK", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
+		}
 	}
 
 	@GetMapping(value="/deleteDoctor")
 	public ResponseEntity<String> deleteDoctor(@RequestParam(name="doctorId",defaultValue = "0") int doctorId) {
-		
-		doctorService.deleteDoctor(doctorId);
-		return new ResponseEntity<String>("OK", HttpStatus.OK);
+		try {
+			doctorService.deleteDoctor(doctorId);
+			return new ResponseEntity<String>("OK", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
+		}
 	}
 	
 	@GetMapping(value="countDoctorBySearchSpecial")
 	public ResponseEntity<Long> countDoctorBySearchSpecial(@RequestParam(name="keySearch", defaultValue = "") String keySearch) {
+		try {
+			long count = doctorService.countDoctorBySearchSpecial(keySearch);
+			return new ResponseEntity<Long>(count, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(-1L, HttpStatus.OK);
+		}
 		
-		long count = doctorService.countDoctorBySearchSpecial(keySearch);
-		
-		return new ResponseEntity<Long>(count, HttpStatus.OK);
 	}
 	
 	@GetMapping(value="/getAllDoctorBySearchSpecial")
 	public ResponseEntity<List<DoctorDTO>> getAllDoctorBySearchSpecial(@RequestParam(name="keySearch", defaultValue = "") String keySearch,
 				@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
 				@RequestParam(name="pageSize", defaultValue = "0") int pageSize) {
-		pageNumber = pageNumber - 1;
-		List<Doctor> doctors = doctorService.findAllDoctorsWithUserBySearchSpecial(keySearch, pageNumber, pageSize);
-		
-		List<DoctorDTO> dsDTO = new ArrayList<DoctorDTO>();
-		for(Doctor doctor : doctors) {
-			DoctorDTO doctorDTO = DoctorDTO.convertToDTO(doctor);		
-			doctorDTO.getUser().setRole(null);
-			dsDTO.add(doctorDTO);
+		try {
+			pageNumber = pageNumber - 1;
+			List<Doctor> doctors = doctorService.findAllDoctorsWithUserBySearchSpecial(keySearch, pageNumber, pageSize);
+			
+			List<DoctorDTO> dsDTO = new ArrayList<DoctorDTO>();
+			for(Doctor doctor : doctors) {
+				DoctorDTO doctorDTO = DoctorDTO.convertToDTOBySearch(doctor);
+				dsDTO.add(doctorDTO);
+			}
+			
+			return new ResponseEntity<List<DoctorDTO>>(dsDTO, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.OK);
 		}
-		
-		return new ResponseEntity<List<DoctorDTO>>(dsDTO, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="countDoctorBySearchGeneral")
+	public ResponseEntity<Long> countDoctorBySearchGeneral(@RequestParam(name="keySearch", defaultValue = "") String keySearch) {
+		try {
+			long count = doctorService.countDoctorBySearchGeneral(keySearch);
+			return new ResponseEntity<Long>(count, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(-1L, HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping(value="/getAllDoctorBySearchGeneral")
+	public ResponseEntity<List<DoctorDTO>> getAllDoctorBySearchGeneral(@RequestParam(name="keySearch", defaultValue = "") String keySearch,
+				@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
+				@RequestParam(name="pageSize", defaultValue = "0") int pageSize) {
+		try {
+			pageNumber = pageNumber - 1;
+			List<Doctor> doctors = doctorService.findAllDoctorsWithUserBySearchGeneral(keySearch, pageNumber, pageSize);
+			
+			List<DoctorDTO> dsDTO = new ArrayList<DoctorDTO>();
+			for(Doctor doctor : doctors) {
+				DoctorDTO doctorDTO = DoctorDTO.convertToDTOBySearch(doctor);
+				dsDTO.add(doctorDTO);
+			}
+			
+			return new ResponseEntity<List<DoctorDTO>>(dsDTO, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		}
 	}
 	
 }

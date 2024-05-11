@@ -62,6 +62,7 @@ public class User {
 	private String rePassword;
 	
 	@OneToMany(mappedBy="user")
-	private List<Schedule> schedules;
+	private List<Schedule> schedules;	
+	
 	
 }

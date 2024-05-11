@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="base/head.html :: header('Login')"></head>
+<head th:replace="base/head.html :: header('Doctor create')"></head>
 <body>
 <section th:include="base/nav-header.html :: navFragment"></section>
 <nav class="header_menu navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
@@ -21,34 +21,48 @@
 
 <section id="app" class="site-section">
     <div class="container">
-        <div class="row">
+        <div class="row my-5">
             <div class="col-lg-6 mb-5">
                 <h2 class="mb-4">Thông tin Cá nhân</h2>
                 <form>
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-black" for="email">Email</label>
-                            <input type="email" id="email" name="email" v-model="user.email" class="form-control" placeholder="Email" required>
+                            <label class="text-black font-weight-bold" for="email">Email</label> <span class="text-danger"> * </span> <span class="text-danger"> {{test}} </span> <span class="text-danger"> {{validator.email}} </span>
+                            <input type="email" v-model="user.email" :disabled="mode === 'EDIT'" :class="{ 'inputDisabled': mode === 'EDIT' }" id="email" name="email"  class="form-control" placeholder="Email" required>
                         </div>
                     </div>
 
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-black" for="fullName">Họ và tên</label>
+                            <label class="text-black font-weight-bold" for="fullName">Họ và tên</label> <span class="text-danger"> * </span> <span class="text-danger"> {{validator.fullName}} </span>
                             <input type="text" id="fullName" name="fullName" v-model="user.fullName" class="form-control" placeholder="Họ và tên" required>
                         </div>
                     </div>
 
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-black" for="password">Mật khẩu</label>
+                            <label class="text-black font-weight-bold" for="password">Mật khẩu</label> <span class="text-danger"> * </span> <span class="text-danger"> {{validator.password}} </span>
                             <input type="password" id="password"  name="password" v-model="user.password" class="form-control" placeholder="Mật khẩu" required>
                         </div>
                     </div>
                     <div class="row form-group mb-4">
                         <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-black" for="rePassword">Nhập lại mật khẩu</label>
+                            <label class="text-black font-weight-bold" for="rePassword">Nhập lại mật khẩu</label>
                             <input type="password" id="rePassword" name="rePassword" v-model="user.rePassword" class="form-control" placeholder="Nhập lại mật khẩu" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row form-group">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-black font-weight-bold" for="fullName">Địa chỉ</label> 
+                            <input type="text"  v-model="user.address" class="form-control" placeholder="Hà Nội" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row form-group">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-black font-weight-bold">Số điện thoại</label>
+                            <input type="text" v-model="user.phone" class="form-control" placeholder="0987654321" required>
                         </div>
                     </div>
                     
@@ -59,26 +73,50 @@
                 <form class="p-4 border rounded">
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-black">Giới thiệu chung</label>
+                            <label class="text-black font-weight-bold">Giới thiệu chung</label> <span class="text-danger"> * </span> <span class="text-danger"> {{validator.doctorIntroduction}} </span>
                             <textarea v-model="doctor.introduction" id="introduction" class="form-control" placeholder="Introduction" required></textarea>
                         </div>
                     </div>
                     <div class="row form-group mb-1">
                         <div class="col-md-12 mb-md-0">
-                            <label class="text-black">Quá trình đào tạo</label>
+                            <label class="text-black font-weight-bold">Quá trình đào tạo</label> <span class="text-danger"> * </span> <span class="text-danger"> {{validator.doctorTrainingProcess}} </span>
                             <textarea v-model="doctor.trainingProcess" id="trainingProcess" class="form-control" placeholder="Training process" required></textarea>
                         </div>
                     </div>
                     <div class="row form-group mb-1">
                         <div class="col-md-12 mb-md-0">
-                            <label class="text-black">Thành tựu đạt được</label>
+                            <label class="text-black font-weight-bold">Thành tựu đạt được</label> <span class="text-danger"> * </span> <span class="text-danger"> {{validator.doctorAchievements}} </span>
                             <textarea v-model="doctor.achievements" id="achievements" class="form-control" placeholder="Achievements" required></textarea>
                         </div>
                     </div>
                     <div class="row form-group mb-1">
                         <div class="col-md-12 mb-md-0">
-                            <label class="text-black" >Chuyên khoa phụ trách</label>
-							<textarea v-model="doctor.specialty" id="specialty" class="form-control" placeholder="specialty" required></textarea>
+                            <label class="text-black font-weight-bold" >Chuyên khoa phụ trách</label> <span class="text-danger"> * </span> <span class="text-danger"> {{validator.doctorSelectedSpecialization}} </span>
+							<select v-model="selectedSpecialization" class="row form-group ml-1 w-100 py-3 pl-1">
+						        <option value="" disabled>Chọn chuyên môn</option>
+						        <option v-for="specialization in specializations" :value="specialization.id">{{ specialization.name }}</option>
+						    </select>
+                        </div>
+                    </div>
+                    <div class="row form-group mb-1 p-3">
+                        <div class="col-md-12 mb-md-0 border p-2">
+                            <label class="text-black col-12" > <h4 class="text-center"> <b> Cở sở y tế </b> </h4> </label>
+							<div class="row form-group px-3">
+								<label class="text-black font-weight-bold" >Tên phòng khám </label> <span class="text-danger"> &nbsp; * </span> <span class="text-danger"> {{validator.clinicName}} </span>
+								<input type="text" v-model="clinic.name" class="form-control" placeholder="Phòng khám AAA" required>
+							</div>
+							<div class="row form-group px-3">
+								<label class="text-black font-weight-bold" >Thông tin mô tả </label> <span class="text-danger"> &nbsp; * </span> <span class="text-danger"> {{validator.clinicDescription}} </span>
+								<input type="text" v-model="clinic.description" class="form-control" placeholder="Mô tả" required>
+							</div>
+							<div class="row form-group px-3">
+								<label class="text-black font-weight-bold" >Địa chỉ </label> <span class="text-danger"> &nbsp; * </span> <span class="text-danger"> {{validator.clinicAddress}} </span>
+								<input type="text" v-model="clinic.address" class="form-control" placeholder="Hà Nội" required>
+							</div>
+							<div class="row form-group px-3">
+								<label class="text-black font-weight-bold" >Số điện thoại </label> <span class="text-danger"> &nbsp; * </span> <span class="text-danger"> {{validator.clinicPhone}} </span>
+								<input type="text" v-model="clinic.phone" class="form-control" placeholder="0987654321" required>
+							</div>
                         </div>
                     </div>
                 </form>
@@ -86,22 +124,19 @@
             
             <div class="row form-group">
                 <div class="col-md-12">
-                    <input type="button" value="Create" @click="create" class="btn px-4 btn-primary text-white">
+                    <input type="button" :value="mode === 'EDIT' ? 'Update' : 'Create'" @click="create" class="btn px-4 btn-primary text-white">
                 </div>
             </div>
         </div>
     </div>
   
 </section>
-<!-- window.user = /*[[${user}]]*/ null; 
-	window.save_user = /*[[@{/auth/register}]]*/ null; -->
 </body>
 <script th:inline="javascript">
 	window.user = /*[[${user}]]*/ 'null';
-	window.doctor = /*[[${user}]]*/ 'null';
+	window.doctor = /*[[${doctor}]]*/ 'null';
 	window.url = /*[[@{/}]]*/ 'test';
-	var contextPath = /*[[${#httpServletRequest.getContextPath()}]]*/ '';
-	console.log('path', contextPath)
+	window.mode = /*[[${mode}]]*/ 'null';
 </script>
 <script th:src="@{/assets/js/export/doctor_create.js}"></script>
 

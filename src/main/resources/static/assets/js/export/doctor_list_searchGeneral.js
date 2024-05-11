@@ -1,126 +1,184 @@
 const app = new Vue({
-  el: '#app',
-  data: {
-    keySearchGeneral: window.keySearchGeneral,
-    keySearchSpecial: window.keySearchSpecial,
-    keySearch: null,
-   
-    listDoctor: [],
-    totalCount: 0,
-    pageTotal: 0,
-    pageNumber: 1,
-    pageSize: 2,
-    activeIndex: -1,
-  },
-  
-  mounted() {
-	  document.onreadystatechange = async () => {
+	el: '#app',
+	data: {
+		userId: window.userId,
+		keySearch: window.keySearchGeneral,
+
+		listDoctor: [],
+		totalCount: 0,
+		pageTotal: 0,
+		pageNumber: 1,
+		pageSize: 2,
+		activeIndex: -1,
+		
+		validator: Object.assign({}, null),
+		test: '',
+		schedule: Object.assign({}, null),
+	},
+
+	mounted() {
+		document.onreadystatechange = async () => {
 			if (document.readyState == "complete") {
-				app.keySearchGeneral ? app.keySearch = app.keySearchGeneral : app.keySearch = app.keySearchSpecial;
-				
-				app.totalCount = await countDoctorsBySearch(app.keySearch).done();
-				if(app.totalCount > 0) {
-					app.listDoctor = await getAllDoctor(app.pageNumber, app.pageSize).done();
+				app.totalCount = await countDoctorBySearchGeneral(app.keySearch).done();
+				if (app.totalCount > 0) {
+					app.listDoctor = await getAllDoctorBySearchGeneral(app.keySearch, app.pageNumber, app.pageSize);
 					this.activeIndex = 1;
 					app.pageTotal = Math.floor(app.totalCount / app.pageSize) + (app.totalCount % app.pageSize > 0 ? 1 : 0);
 				}
 			}
 		}
-	  
-  },
 
-  
-  methods: {
-	  
-	  async getPage(index) {
-		  this.activeIndex = index;
-		  app.pageNumber = index;
-		  app.listDoctor = await getAllDoctor(app.pageNumber, app.pageSize).done();
-	  },
+	},
+
+
+	methods: {
+
+		async getPage(index) {
+			this.activeIndex = index;
+			app.pageNumber = index;
+			app.listDoctor = await getAllDoctorBySearchGeneral(app.keySearch, app.pageNumber, app.pageSize);
+		},
 		
-	  openLockModal(userId) {
-		  $('#exampleModalLock-' + userId).modal('show');
-	  },
-    
-	  lock(userId, descriptionLock) {
-		  updateLock(userId, false, descriptionLock);
-		  
-		  app.listDoctor.forEach((doctor) => {
-			  if (doctor.user.id === userId) {
-				  doctor.user.active = false;
-			  }
-		  });
-	  },
-	  
-	  unlock(userId) {
-		  var descriptionLock = '';
-		  updateLock(userId, true, descriptionLock);
-		  
-		  app.listDoctor.forEach((doctor) => {
-			  if (doctor.user.id === userId) {
-				  doctor.user.active = true;
-			  }
-		  });
-		  $('#exampleModalLock-' + userId).modal('hide');
-	  },
-	  
-	  deleteDoctor(doctorId) {
-		  deleteDoctor(doctorId);
-		  app.listDoctor = app.listDoctor.filter(doctor => doctor.id !== doctorId);
-	  },
-	
-	
-	
-  }, 
-   
+		async scheduleDoctor(doctor) {
+			app.test = '*';
+			/*app.validator.test = '11';
+			console.log(app.validator.test);
+			Vue.set(app.validator, 'test', '22');
+			console.log(app.validator.test);*/
+			if(app.userId > 0) {
+				var bool = this.validator_schedule();
+				
+				if(bool) {
+					app.schedule.doctorId = doctor.id;
+					app.schedule.userId = app.userId;
+					let response = await addScheduleUser(app.schedule).done();
+					if(response == 'OK') {
+						swal("Đặt lịch với bác sĩ " + doctor.user.fullName + " thành công");
+						$('#exampleModal-' + doctor.id).modal('hide');
+					} else {
+						swal("Đặt lịch với bác sĩ " + doctor.user.fullName + " thất bại");
+					}
+					app.schedule = {};
+					app.listDoctor.forEach(function(doc) {
+						if(doc.id == doctor.id) {
+							doc.isSchedule = true;
+						}
+				    });
+				}
+			} else {
+				 swal({
+				  title: "Bạn chưa đăng nhập",
+				  text: "Đến trang đăng nhập?",
+				  icon: "warning",
+				  buttons: {
+					  cancel: "Hủy",
+					  confirm: "OK"
+				  },
+			  }).then((value) => {
+				  if (value) {
+					  window.location.href = "/asm3/login";
+				  }
+			  });
+			}
+		},
+		
+		validator_schedule: function() {
+			let isValid = true;
+			if(!app.schedule.date) {
+				this.validator.date = 'Ngày không được để trống';
+				isValid = false;
+			} else {
+				this.validator.date = '';
+			}
+			
+			if(!app.schedule.time) {
+				this.validator.time = 'Thời gian không được để trống';
+				isValid = false;
+			} else {
+				this.validator.time = '';
+			}
+			
+			if(!app.schedule.description) {
+				this.validator.description = 'Mô tả bệnh không được để trống';
+				isValid = false;
+			} else {
+				this.validator.description = '';
+			}
+			
+			return isValid;
+		}
+
+
+	},
+
 });
 
-function countDoctors() {
+function countDoctorBySearchGeneral(keySearch) {
 	return $.ajax({
-		url: '/doctor/countDoctor',
+		url: '/doctor/countDoctorBySearchGeneral',
+		data: {
+			keySearch: keySearch,
+		},
 		cache: false,
 		method: 'GET',
 		type: 'GET'
 	});
 }
 
-function getAllDoctor(pageNumber, pageSize) {
-	return $.ajax({
-		url: '/doctor/getAllDoctor',
-		data: {
-			pageNumber: pageNumber,
-			pageSize: pageSize,
-		},
-		cache: false,
-		method: 'GET',
-		type: 'GET'
-	});	
+async function getAllDoctorBySearchGeneral(keySearch, pageNumber, pageSize) {
+    const response = await $.ajax({
+        url: '/doctor/getAllDoctorBySearchGeneral',
+        data: {
+            keySearch: keySearch,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+        },
+        cache: false,
+        method: 'GET',
+        type: 'GET',
+    });
+
+    if (app.userId > 0) {
+        var doctors = [];
+        var promises = [];
+
+        for (let doctor of response) {
+            promises.push(checkScheduleByUserIdAndDoctorId(app.userId, doctor.id).then((is) => {
+                doctor.isSchedule = is;
+            }));
+            doctors.push(doctor);
+        }
+
+        await Promise.all(promises);
+        return doctors;
+    }
+
+    return response;
 }
 
-function updateLock(userId, isLock, descriptionLock) {
+function checkScheduleByUserIdAndDoctorId(userId, doctorId) {
 	return $.ajax({
-		url: '/doctor/updateLock',
+		url: '/schedule/checkScheduleByUserIdAndDoctorId',
 		data: {
 			userId: userId,
-			isLock: isLock,
-			descriptionLock: descriptionLock,
-		},
-		cache: false,
-		method: 'GET',
-		type: 'GET'
-	});	
-}
-
-function deleteDoctor(doctorId) {
-	return $.ajax({
-		url: '/doctor/deleteDoctor',
-		data: {
 			doctorId: doctorId,
 		},
 		cache: false,
 		method: 'GET',
-		type: 'GET'
-	});	
+		type: 'GET',
+	});
+}
+
+function addScheduleUser(schedule) {
+	return $.ajax({
+		url: '/schedule/addSchedule',
+		data: JSON.stringify(schedule),
+		cache: false,
+		contentType: 'application/json',
+		processData: false,
+		method: 'POST',
+		type: 'POST'
+	});
 }
 
 

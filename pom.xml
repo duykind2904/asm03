@@ -69,6 +69,18 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf -->
+		<dependency>
+		    <groupId>org.xhtmlrenderer</groupId>
+		    <artifactId>flying-saucer-pdf</artifactId>
+		    <version>9.7.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>ognl</groupId>
+		    <artifactId>ognl</artifactId>
+		    <version>3.2.21</version> <!-- Thay version tùy thuộc vào phiên bản bạn muốn sử dụng -->
+		</dependency>
+
         
 	</dependencies>
 

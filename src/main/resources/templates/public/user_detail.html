@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="base/head.html :: header('Login')"></head>
+<head th:replace="base/head.html :: header('User Detail')"></head>
 <body>
 <section th:include="base/nav-header.html :: navFragment"></section>
 <nav class="header_menu navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
@@ -12,32 +12,33 @@
     <div class="container">
         <div class="row no-gutters slider-text align-items-end justify-content-start">
             <div class="col-md-12 text-center mb-5">
-                <p class="breadcrumbs mb-0"><span class="mr-3"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> Bác sĩ<span></span></p>
-                <h1 class="mb-3 bread">Trang chi tiết bác sĩ</h1>
+                <p class="breadcrumbs mb-0"><span class="mr-3"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> Nguời dùng<span></span></p>
+                <h1 class="mb-3 bread">Chi tiết người dùng</h1>
             </div>
         </div>
     </div>
 </div>
 
 <section id="app" class="site-section bg-light">
-    <div class="container" >
+    <div class="container">
         <div class="row my-5">
-            <div class="col-lg-6 mb-5">
+            <div class="col-lg-12 mb-5">
                 <h2 class="mb-4">Thông tin Cá nhân</h2>
                 <form>
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-black font-weight-bold" >Email</label>
-                            <input type="text" v-model="user.email" disabled class="form-control inputDisabled" placeholder="Email" required>
+                            <label class="text-black font-weight-bold" for="email">Email</label>
+                            <input type="email" v-model="user.email" disabled id="email" name="email"  class="form-control inputDisabled" placeholder="Email" required>
                         </div>
                     </div>
 
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
                             <label class="text-black font-weight-bold" for="fullName">Họ và tên</label>
-                            <input type="text" id="fullName" name="fullName" disabled v-model="user.fullName" class="form-control inputDisabled" placeholder="Họ và tên" required>
+                            <input type="text" id="fullName" name="fullName" v-model="user.fullName" disabled class="form-control inputDisabled" placeholder="Họ và tên" required>
                         </div>
                     </div>
+                    
                     <div class="row form-group">
                         <div class="col-md-12 mb-3 mb-md-0">
                             <label class="text-black font-weight-bold" for="fullName">Địa chỉ</label> 
@@ -54,74 +55,22 @@
                     
                 </form>
             </div>
-            <div class="col-lg-6">
-                <h2 class="mb-4">Thông tin bác sĩ</h2>
-                <form class="p-4 border rounded">
-                    <div class="row form-group">
-                        <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-black font-weight-bold">Giới thiệu chung</label>
-                            <textarea v-model="doctor.introduction" id="introduction" disabled class="form-control inputDisabled" placeholder="Introduction" required></textarea>
-                        </div>
-                    </div>
-                    <div class="row form-group mb-1">
-                        <div class="col-md-12 mb-md-0">
-                            <label class="text-black font-weight-bold">Quá trình đào tạo</label>
-                            <textarea v-model="doctor.trainingProcess" id="trainingProcess" disabled class="form-control inputDisabled" placeholder="Training process" required></textarea>
-                        </div>
-                    </div>
-                    <div class="row form-group mb-1">
-                        <div class="col-md-12 mb-md-0">
-                            <label class="text-black font-weight-bold">Thành tựu đạt được</label>
-                            <textarea v-model="doctor.achievements" id="achievements" disabled class="form-control inputDisabled" placeholder="Achievements" required></textarea>
-                        </div>
-                    </div>
-                    <div class="row form-group mb-1">
-                        <div class="col-md-12 mb-md-0">
-                            <label class="text-black font-weight-bold" >Chuyên khoa phụ trách</label>
-							<input type="text" v-model="selectedSpecialization" disabled class="form-control inputDisabled" placeholder="0987654321" required>
-							
-                        </div>
-                    </div>
-                    <div class="row form-group mb-1 p-3">
-                        <div class="col-md-12 mb-md-0 border p-2">
-                            <label class="text-black col-12" > <h4 class="text-center"> <b> Cở sở y tế </b> </h4> </label>
-							<div class="row form-group px-3">
-								<label class="text-black font-weight-bold" >Tên phòng khám </label>
-								<input type="text" v-model="clinic.name" disabled class="form-control inputDisabled" placeholder="Phòng khám AAA" required>
-							</div>
-							<div class="row form-group px-3">
-								<label class="text-black font-weight-bold" >Thông tin mô tả </label>
-								<input type="text" v-model="clinic.description" disabled class="form-control inputDisabled" placeholder="Mô tả" required>
-							</div>
-							<div class="row form-group px-3">
-								<label class="text-black font-weight-bold" >Địa chỉ </label>
-								<input type="text" v-model="clinic.address" disabled class="form-control inputDisabled" placeholder="Hà Nội" required>
-							</div>
-							<div class="row form-group px-3">
-								<label class="text-black font-weight-bold" >Số điện thoại </label>
-								<input type="text" v-model="clinic.phone" disabled class="form-control inputDisabled" placeholder="0987654321" required>
-							</div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-         </div>
+        </div>
     </div>
-
-	<div class="container">
-		<div class="row ">
-			<div class="col-lg-12">
-				<h2 class="text-primary font-weight-bold text-center w-100">Danh sách bệnh nhân đăng ký khám chữa bệnh</h2>
-				
-				<div v-if="totalCount == 0" class="mt-3">
-					<h3 class="w-100 text-center text-info"> Không có người nào đăng kí khám bệnh</h3>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 pr-lg-4">
+            	<h2 class="mb-3 bread w-100 text-center font-weight-bold text-primary">Hồ sơ bệnh án</h2>
+            	<div v-if="totalCount <= 0">
+					<h3 class="w-100 text-center text-info"> Chưa đăng ký khám bệnh lần nào</h3>
 				</div>
-				
-				<div v-if="totalCount > 0">
+            
+	            <div v-if="totalCount > 0">
 	       			<p class="btn btn-success"> {{totalCount}}  kết quả</p>
 	       		</div>
 	       		
-				<div v-if="totalCount > 0" v-for="(r, index) in listUserSchedule" :key="index">
+	       		<div v-if="totalCount > 0" v-for="(r, index) in listScheduleByUser" :key="index">
                     <div class="col-md-12 row">
                     	<div class="job-post-item d-4 d-block d-lg-flex align-items-center col-sm-3">
                     		<div class="one-third mb-4 mb-md-0 col-12 text-break">
@@ -138,7 +87,7 @@
                         <div class="job-post-item p-4 d-block d-lg-flex align-items-center col-sm-4">
                             <div class="one-third mb-4 mb-md-0 text-break col-12">
                              	<div class="job-post-item-header align-items-center">
-                                 	  <h2 class="mr-3 text-black" ><a href="#">{{ r.userName }}</a></h2>
+                                 	  <h2 class="mr-3 text-black" ><a href="#">{{ r.doctor.clinic.name }}</a></h2>
                                 </div>
                                 <div>
                                 	<label> <b> Tình trạng bệnh trước khi khám: </b> </label>
@@ -155,6 +104,9 @@
 	                               	<span v-if="r.patient && r.patient.status === true && r.patient.examStatus === false" class="text-danger"> Đã xác nhận</span>
 	                               	<span v-if="r.patient && r.patient.status === true && r.patient.examStatus === true" class="text-danger"> Đã Khám</span>
                                </div>
+                               <div v-if="!r.patient || r.patient.status == null">
+                                	<a data-toggle="modal" :data-target="'#exampleModal-' + r.id" class="btn btn-danger text-white py-2 ml-2">Hủy lịch khám</a>
+                                </div>
                              	<div v-if="r.patient && r.patient.status === false">
                                 	<label> <b> Lý do Hủy khám: </b> </label>
                                 	<span>{{ r.patient.descriptionDisease}}</span>
@@ -166,8 +118,34 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Modal cancel -->
+                    <div class="modal fade" :id="'exampleModal-' + r.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn hủy khám ?</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+	                                    <label> Hủy đặt lịch với </label>
+	                                    <span> <b> {{r.doctor.clinic.name }} </b></span>
+                                        <div class="modal-footer mt-1">
+                                            <button type="button" @click="deleteSchedule(r)" data-dismiss="modal" class="btn btn-danger">Hủy khám</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                   <!-- Modal -->
                 </div>
-                
+	       		
                 <div class="row mt-5" v-if="pageTotal>0">
                     <div class="col text-center">
                         <div class="block-27">
@@ -183,20 +161,17 @@
                         </div>
                     </div>
                 </div>
-			</div>
-		</div>
-	</div>
+            </div>
 
+        </div>
+    </div>
+  
 </section>
-
-<script th:inline="javascript">
-	window.user = /*[[${user}]]*/'null';
-	window.doctor = /*[[${doctor}]]*/'null';
-	window.url = /*[[@{/}]]*/'test';
-	window.mode = /*[[${mode}]]*/'null';
-</script>
-<script th:src="@{/assets/js/export/doctor_detail.js}"></script>
 </body>
-
+<script th:inline="javascript">
+	window.user = /*[[${user}]]*/ 'null';
+	window.url = /*[[@{/}]]*/ 'test';
+</script>
+<script th:src="@{/assets/js/export/user_detail.js}"></script>
 
 </html>

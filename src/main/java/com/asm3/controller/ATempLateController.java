@@ -1,6 +1,7 @@
 package com.asm3.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,16 @@ public class ATempLateController {
 	@Autowired private ClinicService clinicService;
 	
 	@RequestMapping("/")
-	public String home(Principal p) {
+	public String home(Principal p, Model model) {
+		int userId = 0;
+		if(p != null) {
+			Authentication au = SecurityContextHolder.getContext().getAuthentication();
+			CustomUserDetails cu = (CustomUserDetails) au.getPrincipal();
+	    	User user = cu.getUser();
+	    	userId = user.getId();
+		}
+		
+		model.addAttribute("userId", userId);
 		return "public/index";
 	}
 	
@@ -70,16 +80,28 @@ public class ATempLateController {
 	}
 	
 	@GetMapping("/doctor/edit")
-	public String doctorEdit(Model model, @RequestParam(name="id",defaultValue = "0") int id) {
-		Doctor doctor = doctorService.findJoinUserById(id);
-		model.addAttribute("doctor", doctor);
+	public String doctorEdit(Principal p, Model model, 
+			@RequestParam(name="id",defaultValue = "0") int id) {
+		
+		if(p != null && id == 0) {
+			Authentication au = SecurityContextHolder.getContext().getAuthentication();
+			CustomUserDetails cu = (CustomUserDetails) au.getPrincipal();
+	    	User user = cu.getUser();
+	    	id = doctorService.findDoctorIdByUserId(user.getId());
+		}
+		Doctor doctor = doctorService.findJoinAllById(id);
+		DoctorDTO doctorDTO = DoctorDTO.convertToDTOBySearch(doctor);
+		model.addAttribute("doctor", doctorDTO);
+		model.addAttribute("mode", "EDIT");
 		return "public/doctor_create";
 	}
 	
 	@GetMapping("/doctor/detail")
 	public String doctorDetail(Model model, @RequestParam(name="id",defaultValue = "0") int id) {
-		Doctor doctor = doctorService.findJoinUserById(id);
-		model.addAttribute("doctor", doctor);
+		Doctor doctor = doctorService.findJoinAllById(id);
+		DoctorDTO doctorDTO = DoctorDTO.convertToDTOBySearch(doctor);
+		model.addAttribute("doctor", doctorDTO);
+		model.addAttribute("mode", "DETAIL");
 		return "public/doctor_detail";
 	}
 	
@@ -94,60 +116,68 @@ public class ATempLateController {
 	}
 	
 	@RequestMapping("/user/list")
-	public String userList(Model model) {
-		UserDTO userDTO = new UserDTO();
-		DoctorDTO doctorDTO = new DoctorDTO();
-		
-		model.addAttribute("user", userDTO);
-		model.addAttribute("doctor", doctorDTO);
+	public String userList(Principal p, Model model) {
 		return "public/user_list";
 	}
 	
 	@GetMapping("/user/edit")
-	public String userEdit(Model model, @RequestParam(name="id",defaultValue = "0") int id) {
-		User user = userService.findById(id);
-		model.addAttribute("user", user);
-		return "public/user_edit";
+	public String userEdit(Principal p, Model model) {
+		if(p != null) {
+			Authentication au = SecurityContextHolder.getContext().getAuthentication();
+			CustomUserDetails cu = (CustomUserDetails) au.getPrincipal();
+	    	User user = cu.getUser();
+	    	UserDTO userDTO = UserDTO.convertToDTO(user);
+			
+			model.addAttribute("user", userDTO);
+			return "public/user_edit";
+		}
+		
+		return "Error";		
 	}
 	
 	@GetMapping("/user/detail")
-	public String userDetail(Model model, @RequestParam(name="id",defaultValue = "0") int id) {
+	public String userDetail(Principal p, Model model,
+			@RequestParam(name="id",defaultValue = "0") int id) {
+		
 		User user = userService.findById(id);
-		model.addAttribute("user", user);
+		if(user == null) {
+			return "Error";
+		}
+		
+		UserDTO userDTO = UserDTO.convertToDTO(user);
+		
+		model.addAttribute("user", userDTO);
 		return "public/user_detail";
+				
 	}
 	
 	@RequestMapping("/schedule/listUserSchedule")
-	public String listUserSchedule(Model model, @RequestParam(name="doctorId",defaultValue = "0") int doctorId) {
+	public String listUserSchedule(Principal p, Model model,
+			@RequestParam(name="doctorId",defaultValue = "0") int doctorId) {
+		if(p != null && doctorId == 0) {
+			Authentication au = SecurityContextHolder.getContext().getAuthentication();
+			CustomUserDetails cu = (CustomUserDetails) au.getPrincipal();
+	    	User user = cu.getUser();
+	    	doctorId = doctorService.findDoctorIdByUserId(user.getId());
+		}
+		
 		model.addAttribute("doctorId", doctorId);
 		return "public/doctor_listUserSchedule";
 	}
 	
 	
-	
-	@RequestMapping("/profile/user")
-	public String profileUser(Principal p, Model model) {
-		Authentication au = SecurityContextHolder.getContext().getAuthentication();
-		if(au != null) {
-			CustomUserDetails cu = (CustomUserDetails) au.getPrincipal();
-	    	User user = cu.getUser();
-	    	UserDTO userDTO = new UserDTO();
-	    	userDTO.setEmail(user.getEmail());
-	    	userDTO.setAddress(user.getAddress());
-	    	userDTO.setAvatar(user.getAvatar());
-	    	userDTO.setPhone(user.getPhone());
-	    	userDTO.setFullName(user.getFullName());
-	    	
-	    	model.addAttribute("user", userDTO);
-		}
-		
-		return "public/profile";
-	}
-	
 	@PostMapping("/doctor/searchGeneral")
     public String searchGeneral(@RequestParam("keySearch") String keySearch, 
     		Model model, Principal p) {
+		int userId = 0;
+		if(p != null) {
+			Authentication au = SecurityContextHolder.getContext().getAuthentication();
+			CustomUserDetails cu = (CustomUserDetails) au.getPrincipal();
+	    	User user = cu.getUser();
+	    	userId = user.getId();
+		}
 		
+		model.addAttribute("userId", userId);
 		model.addAttribute("keySearchGeneral", keySearch);
         return "public/searchGeneral"; 
     }
@@ -155,9 +185,10 @@ public class ATempLateController {
 	@PostMapping("/doctor/searchSpecial")
     public String searchSpecial(@RequestParam("keySearch") String keySearch, 
     		Model model, Principal p) {
-		Authentication au = SecurityContextHolder.getContext().getAuthentication();
+		
 		int userId = 0;
-		if(au != null) {
+		if(p != null) {
+			Authentication au = SecurityContextHolder.getContext().getAuthentication();
 			CustomUserDetails cu = (CustomUserDetails) au.getPrincipal();
 	    	User user = cu.getUser();
 	    	userId = user.getId();
@@ -166,5 +197,23 @@ public class ATempLateController {
 		model.addAttribute("keySearchSpecial", keySearch);
         return "public/searchSpecial";  
     }
+	
+	@GetMapping("/patient/list")
+	public String patientList(Principal p, Model model, 
+			@RequestParam(name="userId",defaultValue = "0") int userId) {
+		
+		if(p != null && userId == 0) {
+			Authentication au = SecurityContextHolder.getContext().getAuthentication();
+			CustomUserDetails cu = (CustomUserDetails) au.getPrincipal();
+	    	User user = cu.getUser();
+	    	userId = user.getId();
+		}
+		
+		User user = userService.findById(userId);
+		UserDTO userDTO = UserDTO.convertToDTO(user);
+		model.addAttribute("user", userDTO);
+		
+		return "public/patient_list";
+	}
 
 }

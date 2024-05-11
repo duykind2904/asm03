@@ -32,15 +32,20 @@ public class DoctorService {
 	
 	@SuppressWarnings("unchecked")
 	public List<Doctor> findAllDoctorsWithUser(int pageNumber, int pageSize) {
+		String sql = "SELECT d FROM Doctor d "
+				+ "LEFT JOIN FETCH d.user u "
+				+ "LEFT JOIN FETCH d.specialization s "
+				+ "ORDER BY d.id DESC";
+		
 		int offset = pageNumber * pageSize;
-	    return entityManager.createQuery("SELECT d FROM Doctor d LEFT JOIN FETCH d.user u ORDER BY d.id DESC")
+	    return entityManager.createQuery(sql)
 	                        .setFirstResult(offset)
 	                        .setMaxResults(pageSize)
 	                        .getResultList();
 	}
 	
-	public Doctor findJoinUserById(int id) {
-		return repo.findJoinUserById(id);
+	public Doctor findJoinAllById(int id) {
+		return repo.findJoinAllById(id);
 	}
 	
 	public void deleteDoctor(int id) {
@@ -52,7 +57,10 @@ public class DoctorService {
 	}
 	
 	public long countDoctorBySearchSpecial(String keySearch) {
-		String sql = "SELECT COUNT(d) FROM Doctor d LEFT JOIN d.specialization s WHERE UPPER(s.name) LIKE UPPER(:keySearch)";
+		String sql = "SELECT COUNT(d) FROM Doctor d "
+				+ "LEFT JOIN d.specialization s "
+				
+				+ "WHERE UPPER(s.name) LIKE UPPER(:keySearch)";
 		Query query = entityManager.createQuery(sql);
 		query.setParameter("keySearch", "%" + keySearch + "%");
 		return (long) query.getSingleResult();
@@ -64,6 +72,8 @@ public class DoctorService {
 		String sql = "SELECT d FROM Doctor d "
 				+ "LEFT JOIN FETCH d.user u "
 				+ "LEFT JOIN FETCH d.specialization s "
+				+ "LEFT JOIN FETCH d.clinic c "
+				
 				+ "WHERE UPPER(s.name) LIKE UPPER(:keySearch) "
 				+ "ORDER BY d.id DESC";
 				
@@ -76,5 +86,49 @@ public class DoctorService {
 		
 		return (List<Doctor>) query.getResultList();
 		
+	}
+	
+	public long countDoctorBySearchGeneral(String keySearch) {
+		String sql = "SELECT COUNT(d) FROM Doctor d "
+				+ "LEFT JOIN d.user u "
+				+ "LEFT JOIN d.specialization s "
+				+ "LEFT JOIN d.clinic c "
+				
+				+ "WHERE UPPER(s.name) LIKE UPPER(:keySearch) "
+				+ "OR UPPER(u.fullName) LIKE UPPER(:keySearch)"
+				+ "OR UPPER(c.name) LIKE UPPER(:keySearch)"
+				+ "OR UPPER(c.address) LIKE UPPER(:keySearch)";
+		Query query = entityManager.createQuery(sql);
+		query.setParameter("keySearch", "%" + keySearch + "%");
+		return (long) query.getSingleResult();
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Doctor> findAllDoctorsWithUserBySearchGeneral(String keySearch, int pageNumber, int pageSize) {
+		String sql = "SELECT d FROM Doctor d "
+				+ "LEFT JOIN FETCH d.user u "
+				+ "LEFT JOIN FETCH d.specialization s "
+				+ "LEFT JOIN FETCH d.clinic c "
+				
+				+ "WHERE UPPER(s.name) LIKE UPPER(:keySearch) "
+				+ "OR UPPER(u.fullName) LIKE UPPER(:keySearch)"
+				+ "OR UPPER(c.name) LIKE UPPER(:keySearch)"
+				+ "OR UPPER(c.address) LIKE UPPER(:keySearch)"
+				+ "ORDER BY d.id DESC";
+				
+		int offset = pageNumber * pageSize;
+		Query query = entityManager.createQuery(sql)
+	                        .setFirstResult(offset)
+	                        .setMaxResults(pageSize);
+		
+		query.setParameter("keySearch", "%" + keySearch + "%");
+		
+		return (List<Doctor>) query.getResultList();
+		
+	}
+	
+	public int findDoctorIdByUserId(int userId) {
+		return repo.findDoctorIdByUserId(userId);
 	}
 }

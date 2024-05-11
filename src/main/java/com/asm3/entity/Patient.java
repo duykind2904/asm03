@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -35,7 +36,10 @@ public class Patient {
 	@Column(name="dec_exam")
 	private String decExam;
 	
-	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "schedules_id", referencedColumnName = "id")
     private Schedule schedule;  
+	
+	@Transient
+	private int scheduleId;
 }

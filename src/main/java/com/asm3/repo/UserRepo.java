@@ -1,5 +1,7 @@
 package com.asm3.repo;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,8 +24,21 @@ public interface UserRepo extends JpaRepository<User, Integer>{
 //	User findByDoctor(@Param("doctorId") int doctorId);
 	
 	@Query("SELECT COUNT(u) FROM User u WHERE u.role.id = 1")
-	Long countUser();
+	Long countUserByRole();
 	
-	@Query("SELECT u FROM User u WHERE u.role.id = 1")
-	Page<User> findAllUser(Pageable pageable);
+	@Query("SELECT u FROM User u WHERE u.role.id = 1 ORDER BY u.id DESC ")
+	Page<User> findAllUserByRole(Pageable pageable);
+	
+	@Query("SELECT u FROM User u "
+			+ "JOIN FETCH u.schedules s "
+			+ "JOIN FETCH s.doctor d "
+			+ "JOIN FETCH d.clinic c "
+			+ "WHERE u.id = :id")
+	User findJoinAllUser(@Param("id") int id);
+	
+	@Query("SELECT distinct u FROM User u "
+			+ "JOIN FETCH u.role r "
+			+ "WHERE r.id = 1 "
+			+ "ORDER BY u.id DESC")
+	List<User> findAllUserByRole();
 }

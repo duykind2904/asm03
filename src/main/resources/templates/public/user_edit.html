@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base/head.html :: header('User Edit')"></head>
+<body>
+<section th:include="base/nav-header.html :: navFragment"></section>
+<nav class="header_menu navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    
+</nav>
+<div class="hero-wrap hero-wrap-2" style="background-image: url('/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-start">
+            <div class="col-md-12 text-center mb-5">
+                <p class="breadcrumbs mb-0"><span class="mr-3"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> Nguời dùng<span></span></p>
+                <h1 class="mb-3 bread">Cập nhật người dùng</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section id="app" class="site-section">
+    <div class="container">
+        <div class="row my-5">
+            <div class="col-lg-12 mb-5">
+                <h2 class="mb-4">Thông tin Cá nhân</h2>
+                <form>
+                    <div class="row form-group">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-black font-weight-bold" for="email">Email</label> <span class="text-danger"> * </span> <span class="text-danger"> {{test}} </span> <span class="text-danger"> {{validator.email}} </span>
+                            <input type="email" v-model="user.email" disabled id="email" name="email"  class="form-control inputDisabled" placeholder="Email" required>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-black font-weight-bold" for="fullName">Họ và tên</label> <span class="text-danger"> * </span> <span class="text-danger"> {{validator.fullName}} </span>
+                            <input type="text" id="fullName" name="fullName" v-model="user.fullName" class="form-control" placeholder="Họ và tên" required>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-black font-weight-bold" for="password">Mật khẩu</label> <span class="text-danger"> * </span> <span class="text-danger"> {{validator.password}} </span>
+                            <input type="password" id="password"  name="password" v-model="user.password" class="form-control" placeholder="Mật khẩu" required>
+                        </div>
+                    </div>
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-black font-weight-bold" for="rePassword">Nhập lại mật khẩu</label>
+                            <input type="password" id="rePassword" name="rePassword" v-model="user.rePassword" class="form-control" placeholder="Nhập lại mật khẩu" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row form-group">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-black font-weight-bold" for="fullName">Địa chỉ</label> 
+                            <input type="text"  v-model="user.address" class="form-control" placeholder="Hà Nội" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row form-group">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-black font-weight-bold">Số điện thoại</label>
+                            <input type="text" v-model="user.phone" class="form-control" placeholder="0987654321" required>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+            
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <input type="button" value="Update" @click="create" class="btn px-4 btn-primary text-white">
+                </div>
+            </div>
+        </div>
+    </div>
+  
+</section>
+</body>
+<script th:inline="javascript">
+	window.user = /*[[${user}]]*/ 'null';
+	window.url = /*[[@{/}]]*/ 'test';
+</script>
+<script th:src="@{/assets/js/export/user_edit.js}"></script>
+
+</html>

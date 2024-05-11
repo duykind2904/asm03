@@ -2,8 +2,6 @@ const app = new Vue({
 	el: '#app',
 	data: {
 		userId: window.userId,
-		keySearch: window.keySearchSpecial,
-
 		listDoctor: [],
 		totalCount: 0,
 		pageTotal: 0,
@@ -14,17 +12,17 @@ const app = new Vue({
 		validator: Object.assign({}, null),
 		test: '',
 		schedule: Object.assign({}, null),
+		
+		specialzations: [],
 	},
 
 	mounted() {
 		document.onreadystatechange = async () => {
 			if (document.readyState == "complete") {
-				app.totalCount = await countDoctorBySearchSpecial(app.keySearch).done();
-				if (app.totalCount > 0) {
-					app.listDoctor = await getAllDoctorBySearchSpecial(app.keySearch, app.pageNumber, app.pageSize);
-					this.activeIndex = 1;
-					app.pageTotal = Math.floor(app.totalCount / app.pageSize) + (app.totalCount % app.pageSize > 0 ? 1 : 0);
-				}
+				app.specialzations = await getSpecialzationOutStanding().done();
+				
+				app.listDoctor = await getDoctorOutStanding();
+				
 			}
 		}
 
@@ -33,12 +31,6 @@ const app = new Vue({
 
 	methods: {
 
-		async getPage(index) {
-			this.activeIndex = index;
-			app.pageNumber = index;
-			app.listDoctor = await getAllDoctorBySearchSpecial(app.keySearch, app.pageNumber, app.pageSize);
-		},
-		
 		async scheduleDoctor(doctor) {
 			app.test = '*';
 			/*app.validator.test = '11';
@@ -113,26 +105,18 @@ const app = new Vue({
 
 });
 
-function countDoctorBySearchSpecial(keySearch) {
+function getSpecialzationOutStanding() {
 	return $.ajax({
-		url: '/doctor/countDoctorBySearchSpecial',
-		data: {
-			keySearch: keySearch,
-		},
+		url: '/schedule/getSpecialzationOutStanding',
 		cache: false,
 		method: 'GET',
 		type: 'GET'
 	});
 }
 
-async function getAllDoctorBySearchSpecial(keySearch, pageNumber, pageSize) {
+async function getDoctorOutStanding() {
     const response = await $.ajax({
-        url: '/doctor/getAllDoctorBySearchSpecial',
-        data: {
-            keySearch: keySearch,
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-        },
+        url: '/schedule/getDoctorOutStanding',
         cache: false,
         method: 'GET',
         type: 'GET',

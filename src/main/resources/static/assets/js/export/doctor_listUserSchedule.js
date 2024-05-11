@@ -39,26 +39,41 @@ const app = new Vue({
 		  app.listUserSchedule = await getUserScheduleByDoctorId(app.doctorId, app.pageNumber, app.pageSize).done();
 	  },
 	  
-	  Examination(patientId, event) {
-		  const schedule = app.listUserSchedule.find(s => s.patient && s.patient.id === patientId);
-		  schedule.patient.status = true;
-		  var status = true;
-		  updateConfirm(patientId, status, schedule.patient.descriptionDisease);
+	  async comfirmExam(scheduleIndex, event) {
+		  var patient = {
+			  scheduleId: scheduleIndex.id,
+			  status: true,
+		  }
+		  await createPatient(patient).done(function(data) {
+			  patient = data;
+			  app.listUserSchedule.forEach(schedule => {
+				 if(schedule.id == scheduleIndex.id) schedule.patient = patient;
+			  });
+		  });
+		  
 		  event.preventDefault();
 	  },
 	  
-	  cancelExamination(patientId) {
-		  const schedule = app.listUserSchedule.find(s => s.patient && s.patient.id === patientId);
-		  schedule.patient.status = false;
-		  var status = false;
-		  updateConfirm(patientId, status, schedule.patient.descriptionDisease);
+	  async cancelExam(scheduleIndex) {
+		  var patient = {
+			  scheduleId: scheduleIndex.id,
+			  status: false,
+			  descriptionDisease: scheduleIndex.cancelExamDes,
+		  }
+		  
+		  await createPatient(patient).done(function(data) {
+			  patient = data;
+			  app.listUserSchedule.forEach(schedule => {
+				 if(schedule.id == scheduleIndex.id) schedule.patient = patient;
+			  });
+		  });
 	  },
 	  
-	  handelDesExam(patientId) {
+	  handelExamed(patientId) {
 		  const schedule = app.listUserSchedule.find(s => s.patient && s.patient.id === patientId);
 		  schedule.patient.examStatus = true;
 		  var examStatus = true;
-		  updateExamination(patientId, examStatus, schedule.patient.decExam);
+		  updateExamination(schedule.id, patientId, examStatus, schedule.patient.decExam);
 	  },
 	
   }, 
@@ -87,28 +102,28 @@ function getUserScheduleByDoctorId(doctorId, pageNumber, pageSize) {
 		},
 		cache: false,
 		method: 'GET',
-		type: 'GET'
-	});	
-}
-
-function updateConfirm(patientId, status, descriptionDisease) {
-	return $.ajax({
-		url: '/schedule/updateConfirm',
-		data: {
-			patientId: patientId,
-			status: status,
-			descriptionDisease: descriptionDisease,
-		},
-		cache: false,
-		method: 'GET',
-		type: 'GET'
+		type: 'GET',
+		success: function(response) {
+				var schedules = [];
+		for (let schedule of response) {
+	        if(!schedule.patient) {
+				schedule.patient = {};
+			}
+	        schedules.push(schedule);
+	    }
+	    
+	    return schedules;
+		}
 	});
+	
+	
 }
 
-function updateExamination(patientId, examStatus, decExam) {
+function updateExamination(scheduleId, patientId, examStatus, decExam) {
 	return $.ajax({
-		url: '/schedule/updateExamination',
+		url: '/patient/updateExamination',
 		data: {
+			scheduleId: scheduleId,
 			patientId: patientId,
 			examStatus: examStatus,
 			decExam: decExam,
@@ -119,6 +134,18 @@ function updateExamination(patientId, examStatus, decExam) {
 	});
 }
 
+
+function createPatient(patient) {
+	return $.ajax({
+		url: '/patient/create',
+		data: JSON.stringify(patient),
+		cache: false,
+		contentType: 'application/json',
+		processData: false,
+		method: 'POST',
+		type: 'POST'
+	});	
+}
 
 
 

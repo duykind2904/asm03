@@ -46,7 +46,6 @@
                                 	<a v-if="!r.active" data-toggle="modal" @click="unlock(r.id)" class="btn btn-danger text-white py-2 ml-2">Mở khóa</a>
                                 	
                                     <a :href="'/asm3/user/detail?id=' + r.id" class="btn btn-primary py-2 ml-2">Xem chi tiết</a>
-                                    <a :href="'/asm3/user/edit?id=' + r.id"  class="btn btn-warning py-2 ml-2">Cập nhật</a>
                                     <a class="btn btn-danger py-2 ml-2" href="" data-toggle="modal" :data-target="'#exampleModal-' + r.id">Xóa</a>
 
                                 </div>
@@ -67,8 +66,8 @@
                                         <span>{{ r.fullName }}</span> <br />
                                         <form>
                                             <div class="modal-footer mt-1">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                                                 <button type="button" @click="deleteUser(r.id)" data-dismiss="modal" class="btn btn-danger">Xóa</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                                             </div>
                                         </form>
                                     </div>
@@ -96,8 +95,8 @@
                                         <textarea v-model="r.descriptionLock" class="form-control" required></textarea>
                                         <form>
                                             <div class="modal-footer mt-1">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                                                 <button type="button" @click="lock(r.id, r.descriptionLock)" data-dismiss="modal" class="btn btn-danger">Khóa</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                                             </div>
                                         </form>
                                     </div>
@@ -128,13 +127,7 @@
         </div>
     </div>
 </section>
-</section>
-<!-- window.user = /*[[${user}]]*/ null; 
-	window.save_user = /*[[@{/auth/register}]]*/ null; -->
 </body>
-<script th:inline="javascript">
-
-</script>
 <script th:src="@{/assets/js/export/user_list.js}"></script>
 
 </html>
