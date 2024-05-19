@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -29,7 +30,6 @@ public class ATempLateController {
 	
 	@Autowired private UserService userService;
 	@Autowired private DoctorService doctorService;
-	@Autowired private ClinicService clinicService;
 	
 	@RequestMapping("/")
 	public String home(Principal p, Model model) {
@@ -70,6 +70,7 @@ public class ATempLateController {
 	}
 	
 	@RequestMapping("/doctor/create")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String doctorCreate(Model model) {
 		UserDTO userDTO = new UserDTO();
 		DoctorDTO doctorDTO = new DoctorDTO();
@@ -80,6 +81,7 @@ public class ATempLateController {
 	}
 	
 	@GetMapping("/doctor/edit")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DOCTOR')")
 	public String doctorEdit(Principal p, Model model, 
 			@RequestParam(name="id",defaultValue = "0") int id) {
 		
@@ -96,7 +98,9 @@ public class ATempLateController {
 		return "public/doctor_create";
 	}
 	
+	
 	@GetMapping("/doctor/detail")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String doctorDetail(Model model, @RequestParam(name="id",defaultValue = "0") int id) {
 		Doctor doctor = doctorService.findJoinAllById(id);
 		DoctorDTO doctorDTO = DoctorDTO.convertToDTOBySearch(doctor);
@@ -105,7 +109,9 @@ public class ATempLateController {
 		return "public/doctor_detail";
 	}
 	
+	
 	@RequestMapping("/doctor/list")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String doctorList(Model model) {
 		UserDTO userDTO = new UserDTO();
 		DoctorDTO doctorDTO = new DoctorDTO();
@@ -116,11 +122,13 @@ public class ATempLateController {
 	}
 	
 	@RequestMapping("/user/list")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String userList(Principal p, Model model) {
 		return "public/user_list";
 	}
 	
 	@GetMapping("/user/edit")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public String userEdit(Principal p, Model model) {
 		if(p != null) {
 			Authentication au = SecurityContextHolder.getContext().getAuthentication();
@@ -136,6 +144,7 @@ public class ATempLateController {
 	}
 	
 	@GetMapping("/user/detail")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String userDetail(Principal p, Model model,
 			@RequestParam(name="id",defaultValue = "0") int id) {
 		
@@ -152,6 +161,7 @@ public class ATempLateController {
 	}
 	
 	@RequestMapping("/schedule/listUserSchedule")
+	@PreAuthorize("hasRole('ROLE_DOCTOR')")
 	public String listUserSchedule(Principal p, Model model,
 			@RequestParam(name="doctorId",defaultValue = "0") int doctorId) {
 		if(p != null && doctorId == 0) {
@@ -199,6 +209,7 @@ public class ATempLateController {
     }
 	
 	@GetMapping("/patient/list")
+	@PreAuthorize("hasRole('ROLE_DOCTOR')")
 	public String patientList(Principal p, Model model, 
 			@RequestParam(name="userId",defaultValue = "0") int userId) {
 		

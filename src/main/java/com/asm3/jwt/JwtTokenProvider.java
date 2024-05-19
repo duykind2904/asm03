@@ -16,7 +16,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 @Component
 public class JwtTokenProvider {
 	private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
-    private final String JWT_SECRET = "lodaaaaaa";
+    private final String JWT_SECRET = "loda";
     private final long JWT_EXPIRATION = 604800000L;
 
     public String generateToken(CustomUserDetails userDetails) {

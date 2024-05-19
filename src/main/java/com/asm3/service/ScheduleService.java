@@ -52,13 +52,16 @@ public class ScheduleService {
 		return sc > 0 ? true : false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Object[]> getSpecialzationOutStanding() {
-	    String jpql = "SELECT sp, COUNT(sp.id) FROM Schedule s "
-	                + "LEFT JOIN s.specialization sp "
-	                + "GROUP BY sp, sp.id ";
-	    TypedQuery<Object[]> query = entityManager.createQuery(jpql, Object[].class);
-	    query.setMaxResults(4);
-	    return query.getResultList();
+	    String sql = "SELECT sp.id, sp.name, COUNT(sp.id) " +
+	                 "FROM schedules s " +
+	                 "JOIN specializations sp ON s.specializations_id = sp.id " +
+	                 "GROUP BY sp.id, sp.name ";
+
+	    Query query = entityManager.createNativeQuery(sql);
+	    List<Object[]> resultList = query.getResultList();
+	    return resultList;
 	}
 	
 	public List<Object[]> getDoctorOutStanding() {

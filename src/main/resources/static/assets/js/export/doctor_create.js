@@ -10,7 +10,6 @@ const app = new Vue({
     selectedSpecialization: '',
     clinic: Object.assign({}, null),
     validator: Object.assign({}, null),
-    test: '',
     
     emailLogin: '',
     passwordLogin: '',
@@ -71,12 +70,11 @@ const app = new Vue({
 	},
 	
 	checkInputUser: async function() {
-		app.test = '*';
 		var isValid = true;
 		
 		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 		if(!this.user.email) {
-			this.validator.email = "(Email không được để trống)";
+			app.validator.email = "(Email không được để trống)";
 			isValid = false;
 		} else if (!emailRegex.test(this.user.email)){
 			this.validator.email = "(Email không đúng định dạng)";
@@ -117,13 +115,13 @@ const app = new Vue({
 		
 		if(mode !== 'EDIT' && this.user.email) {
 			const emailValid = await checkEmailRegister(this.user.email).done();
-			if (emailValid) {
+			if (emailValid.data) {
 				this.validator.email = "(Email đã tồn tại)";
 				isValid = false;
 			} 
 		}
 		
-				
+		this.validator = {...this.validator};	
 		return isValid;			
 	}, 
 	

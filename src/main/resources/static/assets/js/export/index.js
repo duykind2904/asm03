@@ -107,7 +107,7 @@ const app = new Vue({
 
 function getSpecialzationOutStanding() {
 	return $.ajax({
-		url: '/schedule/getSpecialzationOutStanding',
+		url: '/asm3/schedule/getSpecialzationOutStanding',
 		cache: false,
 		method: 'GET',
 		type: 'GET'
@@ -116,7 +116,7 @@ function getSpecialzationOutStanding() {
 
 async function getDoctorOutStanding() {
     const response = await $.ajax({
-        url: '/schedule/getDoctorOutStanding',
+        url: '/asm3/schedule/getDoctorOutStanding',
         cache: false,
         method: 'GET',
         type: 'GET',
@@ -142,7 +142,7 @@ async function getDoctorOutStanding() {
 
 function checkScheduleByUserIdAndDoctorId(userId, doctorId) {
 	return $.ajax({
-		url: '/schedule/checkScheduleByUserIdAndDoctorId',
+		url: '/asm3/schedule/checkScheduleByUserIdAndDoctorId',
 		data: {
 			userId: userId,
 			doctorId: doctorId,
@@ -155,7 +155,7 @@ function checkScheduleByUserIdAndDoctorId(userId, doctorId) {
 
 function addScheduleUser(schedule) {
 	return $.ajax({
-		url: '/schedule/addSchedule',
+		url: '/asm3/schedule/addSchedule',
 		data: JSON.stringify(schedule),
 		cache: false,
 		contentType: 'application/json',

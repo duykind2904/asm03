@@ -29,13 +29,13 @@ const app = new Vue({
 	    if (isValid) {
 	        try {
 	            const response = await validatorLogin(this.emailLogin, this.passwordLogin);
-	            if (response === "LOGIN SUCCESS") {
+	            if (response.token) {
 	                console.log("Đăng nhập thành công.");
 					swal("Đăng nhập thành công");
 					setTimeout(() => {
 						window.location.href = '/asm3/';
 					}, 1 * 1000);
-	            } else if (response === "USER BLOCKED") {
+	            } else if (response.status === "USER BLOCKED") {
 					swal("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin để được hướng dẫn");
 					setTimeout(() => {
 						window.location.href = '/asm3/';
@@ -70,7 +70,7 @@ const app = new Vue({
 			app.isCode = true;
 			sendMail(app.emailForgotPass).done(function(response) {
 				console.log(response)
-				if(response === 'Email not exist') {
+				if(response.data === 'Email not exist') {
 					swal('Email chưa được đăng ký. Bạn vui lòng đăng ký');
 					$('#forgotPassword').modal('hide');
 				}
@@ -133,7 +133,7 @@ const app = new Vue({
 		
 		if(this.user.email) {
 			const emailValid = await  checkEmailRegister(this.user.email).done();
-			if (emailValid) {
+			if (emailValid.data) {
 				this.emailMsg = "(Email đã tồn tại)";
 				isValid = false;
 			}

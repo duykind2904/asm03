@@ -36,7 +36,8 @@ public class UserService implements UserDetailsService{
     }
 
 	public UserDetails loadUserById(Long userId) {
-		User user = repo.findById(userId);
+		int idu = userId.intValue();
+		User user = repo.findJoinRoleById(idu);
         if (user == null) {
             throw new UsernameNotFoundException(userId.toString());
         }

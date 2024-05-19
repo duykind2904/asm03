@@ -4,6 +4,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.TemplateEngine;
+import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.asm3.dto.DoctorDTO;
@@ -27,6 +28,7 @@ public class PdfGenerator {
         String processedHtml = templateEngine.process(htmlContent, context);
 
         ITextRenderer renderer = new ITextRenderer();
+        
         renderer.setDocumentFromString(processedHtml);
         renderer.layout();
 

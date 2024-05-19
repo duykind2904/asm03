@@ -2,11 +2,13 @@ package com.asm3.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,13 +81,14 @@ public class UserController {
 	}
 	
 	@GetMapping(value="/checkEmailRegister")
-	public ResponseEntity<Boolean> checkEmailRegister(@RequestParam(name="email",defaultValue = "") String email) {
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<Map<String,Boolean>> checkEmailRegister(@RequestParam(name="email",defaultValue = "") String email) {
 		if(email.equals("")) {
 			return new ResponseEntity<>(null, HttpStatus.OK);
 		}
 		
 		boolean check = userService.checkEmailExist(email);
-		return new ResponseEntity<>(check, HttpStatus.OK);
+		return new ResponseEntity<>(Map.of("data",check), HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/saveUser")

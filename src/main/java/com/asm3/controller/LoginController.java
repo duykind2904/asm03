@@ -1,6 +1,8 @@
 package com.asm3.controller;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.mail.MessagingException;
@@ -52,7 +54,7 @@ public class LoginController {
     @Autowired private RoleService roleService;
 
     @PostMapping(value="/login")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Map<String, String>> authenticateUser(@RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -62,24 +64,27 @@ public class LoginController {
             );
             User user = userService.findByEmail(loginRequest.getEmail());
             if(!user.isActive()) {
-            	return new ResponseEntity<String>("USER BLOCKED", HttpStatus.OK);
+            	return new ResponseEntity<Map<String, String>>(Map.of("status", "USER BLOCKED"), HttpStatus.OK);
             }
             
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-            return new ResponseEntity<String>("LOGIN SUCCESS", HttpStatus.OK);
+            System.out.println("jwt = " + jwt);
+            Map<String, String> jwtJson = new HashMap<>();
+            jwtJson.putIfAbsent("token", jwt);
+            return new ResponseEntity<Map<String, String>>(jwtJson, HttpStatus.OK);
         } catch (AuthenticationException e) {
-            return new ResponseEntity<String>("LOGIN FAIL", HttpStatus.OK);
+            return new ResponseEntity<Map<String, String>>(Map.of("status", "Login failed!"), HttpStatus.OK);
         }
     }    
     
     @Autowired private EmailService emailService;
     @GetMapping("/sendMailForgotPass.json")
-    public ResponseEntity<String> sendMailForgotPass(@RequestParam(name="email", defaultValue = "") String email) throws MessagingException {
+    public ResponseEntity<Map<String,String>> sendMailForgotPass(@RequestParam(name="email", defaultValue = "") String email) throws MessagingException {
     	try {
 	    	User user = userService.findByEmail(email);
 	    	if(user == null) {
-	    		return new ResponseEntity<String>("Email not exist", HttpStatus.OK);
+	    		return new ResponseEntity<>(Map.of("data", "Email not exist"), HttpStatus.OK);
 	    	} 
 	    	
 	    	String code = generateRandomString();
@@ -93,48 +98,48 @@ public class LoginController {
 	    	userService.updateCode(user.getId(), code);
 	    	
 	    	emailService.sendMail(email, subject, emailContent);
-	    	return new ResponseEntity<String>("SEND MAIL SUCCESS", HttpStatus.OK);
+	    	return new ResponseEntity<>(Map.of("data", "SEND MAIL SUCCESS"), HttpStatus.OK);
     	} catch (Exception e) {
-    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
+    		return new ResponseEntity<>(Map.of("data", e.getMessage()), HttpStatus.OK);
     	}
     }
     
     @PostMapping(value="/updatePassword.json")
-    public ResponseEntity<String> updatePassword(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Map<String,String>> updatePassword(@RequestBody LoginRequest loginRequest) {
     	try {
 	    	int id = loginRequest.getId();
 	        String password = loginRequest.getPassword();
 	        String encoderPasword = passwordEncoder.encode(password);
 	        userService.updatePassword(id, encoderPasword);
 	        
-	    	return new ResponseEntity<String>("RESET SUCCESS", HttpStatus.OK);
+	    	return new ResponseEntity<>(Map.of("data", "RESET SUCCESS"), HttpStatus.OK);
     	} catch (Exception e) {
-    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
+    		return new ResponseEntity<>(Map.of("data", e.getMessage()), HttpStatus.OK);
     	}
     }    
     
     @GetMapping("/checkEmailRegister")
-    public ResponseEntity<Boolean> checkEmailRegister(@RequestParam(name="email", defaultValue = "") String email) {
+    public ResponseEntity<Map<String, Boolean>> checkEmailRegister(@RequestParam(name="email", defaultValue = "") String email) {
     	boolean check = userService.checkEmailExist(email);
-        return new ResponseEntity<>(check, HttpStatus.OK);
+        return new ResponseEntity<>(Map.of("data", check), HttpStatus.OK);
     }
     
     @PostMapping(value="/saveUser")
-    public ResponseEntity<String> saveUser(@RequestBody User user) {
+    public ResponseEntity<Map<String,String>> saveUser(@RequestBody User user) {
     	String passwordNoEncoder = user.getPassword();
     	try {
     		int idUserDefauld = 1;
     		Role role = roleService.findById(idUserDefauld);
     		user.setPassword(passwordEncoder.encode(user.getPassword()));
     		user.setRole(role);   		
-    		user.setActive(true);
+    		user.setActive(false);
         	userService.save(user);
     	} catch (Exception e) {
-    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
+    		return new ResponseEntity<>(Map.of("data", e.getMessage()), HttpStatus.OK);
     	}
     	
     	this.loginUser(user.getEmail(),passwordNoEncoder);
-    	return new ResponseEntity<String>("SAVE USER SUCCESS", HttpStatus.OK);
+    	return new ResponseEntity<>(Map.of("data", "SAVE USER SUCCESS"), HttpStatus.OK);
     }    
     
     private void loginUser(String email,String password) {

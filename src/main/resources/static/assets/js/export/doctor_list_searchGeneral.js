@@ -115,7 +115,7 @@ const app = new Vue({
 
 function countDoctorBySearchGeneral(keySearch) {
 	return $.ajax({
-		url: '/doctor/countDoctorBySearchGeneral',
+		url: '/asm3/doctor/countDoctorBySearchGeneral',
 		data: {
 			keySearch: keySearch,
 		},
@@ -127,7 +127,7 @@ function countDoctorBySearchGeneral(keySearch) {
 
 async function getAllDoctorBySearchGeneral(keySearch, pageNumber, pageSize) {
     const response = await $.ajax({
-        url: '/doctor/getAllDoctorBySearchGeneral',
+        url: '/asm3/doctor/getAllDoctorBySearchGeneral',
         data: {
             keySearch: keySearch,
             pageNumber: pageNumber,
@@ -158,7 +158,7 @@ async function getAllDoctorBySearchGeneral(keySearch, pageNumber, pageSize) {
 
 function checkScheduleByUserIdAndDoctorId(userId, doctorId) {
 	return $.ajax({
-		url: '/schedule/checkScheduleByUserIdAndDoctorId',
+		url: '/asm3/schedule/checkScheduleByUserIdAndDoctorId',
 		data: {
 			userId: userId,
 			doctorId: doctorId,
@@ -171,7 +171,7 @@ function checkScheduleByUserIdAndDoctorId(userId, doctorId) {
 
 function addScheduleUser(schedule) {
 	return $.ajax({
-		url: '/schedule/addSchedule',
+		url: '/asm3/schedule/addSchedule',
 		data: JSON.stringify(schedule),
 		cache: false,
 		contentType: 'application/json',

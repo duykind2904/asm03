@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -126,67 +127,6 @@ public class DoctorController {
 			return new ResponseEntity<String>("OK", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.OK);
-		}
-	}
-	
-	@GetMapping(value="countDoctorBySearchSpecial")
-	public ResponseEntity<Long> countDoctorBySearchSpecial(@RequestParam(name="keySearch", defaultValue = "") String keySearch) {
-		try {
-			long count = doctorService.countDoctorBySearchSpecial(keySearch);
-			return new ResponseEntity<Long>(count, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(-1L, HttpStatus.OK);
-		}
-		
-	}
-	
-	@GetMapping(value="/getAllDoctorBySearchSpecial")
-	public ResponseEntity<List<DoctorDTO>> getAllDoctorBySearchSpecial(@RequestParam(name="keySearch", defaultValue = "") String keySearch,
-				@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
-				@RequestParam(name="pageSize", defaultValue = "0") int pageSize) {
-		try {
-			pageNumber = pageNumber - 1;
-			List<Doctor> doctors = doctorService.findAllDoctorsWithUserBySearchSpecial(keySearch, pageNumber, pageSize);
-			
-			List<DoctorDTO> dsDTO = new ArrayList<DoctorDTO>();
-			for(Doctor doctor : doctors) {
-				DoctorDTO doctorDTO = DoctorDTO.convertToDTOBySearch(doctor);
-				dsDTO.add(doctorDTO);
-			}
-			
-			return new ResponseEntity<List<DoctorDTO>>(dsDTO, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.OK);
-		}
-	}
-	
-	@GetMapping(value="countDoctorBySearchGeneral")
-	public ResponseEntity<Long> countDoctorBySearchGeneral(@RequestParam(name="keySearch", defaultValue = "") String keySearch) {
-		try {
-			long count = doctorService.countDoctorBySearchGeneral(keySearch);
-			return new ResponseEntity<Long>(count, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(-1L, HttpStatus.OK);
-		}
-	}
-	
-	@GetMapping(value="/getAllDoctorBySearchGeneral")
-	public ResponseEntity<List<DoctorDTO>> getAllDoctorBySearchGeneral(@RequestParam(name="keySearch", defaultValue = "") String keySearch,
-				@RequestParam(name="pageNumber", defaultValue = "1") int pageNumber,
-				@RequestParam(name="pageSize", defaultValue = "0") int pageSize) {
-		try {
-			pageNumber = pageNumber - 1;
-			List<Doctor> doctors = doctorService.findAllDoctorsWithUserBySearchGeneral(keySearch, pageNumber, pageSize);
-			
-			List<DoctorDTO> dsDTO = new ArrayList<DoctorDTO>();
-			for(Doctor doctor : doctors) {
-				DoctorDTO doctorDTO = DoctorDTO.convertToDTOBySearch(doctor);
-				dsDTO.add(doctorDTO);
-			}
-			
-			return new ResponseEntity<List<DoctorDTO>>(dsDTO, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.OK);
 		}
 	}
 	

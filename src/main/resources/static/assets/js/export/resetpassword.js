@@ -13,7 +13,7 @@ const app = new Vue({
 		var bool = this.checkInputLogin();
 		if(bool) {
 			await updatePassword(app.newPassword).done(function(response) {
-				if (response === "RESET SUCCESS") {					
+				if (response.data === "RESET SUCCESS") {					
 					console.log("Reset thành công.");
 					swal("Reset Password thành công");
 					setTimeout(() => {
